@@ -1,0 +1,77 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Fix listing creation by ensuring seller profile existence and surfacing canister errors (frontend-only)",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Ensure the Create Listing flow guarantees a seller profile exists before attempting listing creation, even for first-time sellers.",
+      "acceptanceCriteria": [
+        "An authenticated user with no existing seller profile can create a listing successfully from the Create Listing page",
+        "Listing creation no longer traps with \"Listing creation not allowed without seller profile\" in normal user flows"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/mutations/useCreateListing.ts",
+          "operation": "modify",
+          "description": "Update the createListing mutation to ensure the caller has a seller profile before calling the backend createListing capability (e.g., check isSeller and, if needed, createSellerProfile using an available display name). Ensure missing prerequisites produce actionable thrown errors for the UI."
+        },
+        {
+          "path": "frontend/src/pages/SellCreateListingPage.tsx",
+          "operation": "modify",
+          "description": "Gate listing submission on a robust 'ensure seller profile' step: if the user lacks a seller profile, trigger seller profile initialization (auto-create when possible) before submitting the listing, and only proceed to createListing after seller status is confirmed."
+        },
+        {
+          "path": "frontend/src/hooks/queries/useCurrentUserProfile.ts",
+          "operation": "modify",
+          "description": "Extend current-user profile querying to support the Create Listing prerequisites flow (e.g., expose enough state to safely decide whether a display name is available for seller-profile auto-creation). Use the authorization component’s recommended actor-aware loading pattern for profile setup flows; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Show actionable canister error details in the Create Listing UI instead of a generic failure toast.",
+      "acceptanceCriteria": [
+        "When createListing fails, the UI shows the real error message (or a clear mapped message) rather than only \"Failed to create listing\"",
+        "Errors are visible without opening the browser console"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/canisterErrors.ts",
+          "operation": "create",
+          "description": "Add a small utility to normalize/parse backend and agent errors into an English message suitable for UI (extract trap text when present; optionally map known messages like missing seller profile into clearer user-facing guidance)."
+        },
+        {
+          "path": "frontend/src/pages/SellCreateListingPage.tsx",
+          "operation": "modify",
+          "description": "Replace the generic error toast with a toast showing the parsed underlying canister/trap error message (or mapped message) using the new error utility."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add a React Query mutation hook for createSellerProfile and integrate seller profile setup into the existing profile setup experience (and Create Listing prerequisite flow).",
+      "acceptanceCriteria": [
+        "There is a working frontend path that calls the backend createSellerProfile method",
+        "After completing profile setup, the user can create listings without hitting seller-profile-related traps"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/mutations/useCreateSellerProfile.ts",
+          "operation": "create",
+          "description": "Implement a React Query mutation hook that calls the backend createSellerProfile capability and invalidates any seller- or profile-related queries as needed."
+        },
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Integrate seller profile initialization into the existing profile setup dialog/flow: after the user provides a display name (or confirms it), call createSellerProfile so the user becomes a seller in-app before creating listings. Use the authorization component’s guidance for authenticated profile setup UX; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/SellCreateListingPage.tsx",
+          "operation": "modify",
+          "description": "Use the new createSellerProfile mutation (directly or indirectly via useCreateListing) so the Create Listing page can initialize seller status using the user’s display name (or guide them to provide one) before attempting listing creation."
+        }
+      ]
+    }
+  ]
+}

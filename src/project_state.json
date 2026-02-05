@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 11,
+  "summary": "SBICON: Internet Computer (Motoko + React) marketplace/reselling app for fidget toy listings, with Internet Identity auth, seller dashboard for managing listings/images, and a standard product catalog to create listings from selection; image uploads are backed by a blob-storage canister.",
+  "existing_features": [
+    {
+      "id": "IF-1",
+      "title": "Internet Identity authentication & actor initialization",
+      "synonyms": [
+        "II auth",
+        "login/logout"
+      ],
+      "description": "Frontend integrates Internet Identity for sign-in and initializes an authenticated/anonymous backend actor for calls.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-2",
+      "title": "User profile management",
+      "synonyms": [
+        "profile",
+        "display name"
+      ],
+      "description": "Create/update and fetch current user profile; display seller names via profile data.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-3",
+      "title": "Listings marketplace (browse, filter, detail views)",
+      "synonyms": [
+        "home feed",
+        "listing grid",
+        "listing detail"
+      ],
+      "description": "Browse listings in a grid, filter by category, and view listing detail pages; includes seller discovery/listing queries.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-4",
+      "title": "Listing CRUD for sellers (create, edit, deactivate)",
+      "synonyms": [
+        "sell flow",
+        "my listings"
+      ],
+      "description": "Authenticated sellers can create and edit listings and deactivate (remove from active marketplace) their listings; includes dedicated Sell pages and My Listings query.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-5",
+      "title": "Image upload & blob storage integration",
+      "synonyms": [
+        "image uploader",
+        "asset storage"
+      ],
+      "description": "Upload listing images via a storage client connected to a blob-storage canister; generated branding assets included in frontend public assets.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-6",
+      "title": "Authorization/access control scaffolding (Motoko)",
+      "synonyms": [
+        "auth mixins",
+        "access-control"
+      ],
+      "description": "Backend includes authorization and access-control modules/mixins to gate protected actions and standardize permissions checks.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-7",
+      "title": "UI framework and app layout (React + Tailwind + shadcn/ui)",
+      "synonyms": [
+        "design system",
+        "components"
+      ],
+      "description": "Tailwind + shadcn/ui component set wired into an application layout with common empty/loading states and branding header.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-8",
+      "title": "Build/deploy template for ICP (Docker/build scripts/config)",
+      "synonyms": [
+        "build-template",
+        "deployment scaffolding"
+      ],
+      "description": "Project includes build-template assets (Dockerfile, scripts, canister configs) for building and deploying the app to ICP.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-root-cause-of-failed-to-create-listing-so-an-authenticated-user-can-successfully-create-a-listing-from-sell-create-even-if-they-have-never-created-a-seller-profile-before-implement-a-robust-flow-that-guarantees-a-seller-profile-exists-before-when-createlisting-runs-either-auto-create-server-side-or-ensure-creation-client-side-before-submitting-the-listing-or-both",
+      "title": "Fix the root cause of “Failed to create listing” so an authenticated user can successfully create a listing from /sell/create even if they have never created a seller profile before. Implement a robust flow that guarantees a seller profile exists before/when createListing runs (either auto-create server-side, or ensure creation client-side before submitting the listing, or both).",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-create-listing-flow-to-display-actionable-error-details-when-listing-creation-fails-instead-of-only-showing-a-generic-toast-parse-and-show-the-underlying-canister-error-trap-message-in-english-in-the-toast-or-a-user-friendly-mapped-message-when-appropriate",
+      "title": "Update the frontend Create Listing flow to display actionable error details when listing creation fails, instead of only showing a generic toast. Parse and show the underlying canister error/trap message (in English) in the toast (or a user-friendly mapped message when appropriate).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-frontend-support-for-seller-profile-creation-so-users-can-become-sellers-in-app-implement-a-react-query-mutation-hook-for-createsellerprofile-and-integrate-it-into-the-existing-profile-setup-experience-so-the-user-can-create-initialize-a-seller-profile-using-their-display-name-or-be-prompted-for-one-before-creating-listings",
+      "title": "Add frontend support for seller profile creation so users can become sellers in-app: implement a React Query mutation hook for createSellerProfile, and integrate it into the existing profile setup experience so the user can create/initialize a seller profile using their display name (or be prompted for one) before creating listings.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Add a seller dashboard UI to create/edit/deactivate listings and upload/manage listing photos from one place.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Provide a standard product catalog/list so sellers can create listings by selecting a pre-defined product (with optional category selector).",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "architectural_notes": [
+    "Architecture: Internet Computer app with Motoko backend canister(s) and React/Vite frontend.",
+    "Auth: Uses Internet Identity; frontend maintains authenticated vs anonymous actors for backend calls.",
+    "Storage: Separate blob-storage canister/module used for listing image uploads and retrieval.",
+    "UI: Tailwind + shadcn/ui component library for consistent UI primitives and layout.",
+    "Backend: Authorization/access-control modules provide reusable permission checks for protected methods.",
+    "Build template now includes a full React/Vite + Tailwind + shadcn/ui scaffold (pnpm workspace) with ICP canister YAMLs for frontend/backend.",
+    "Build tooling: image maintenance scripts (resize/prune unused images) and custom ESLint rules (e.g., enforce Internet Identity provider usage, prevent BigInt in query keys)."
+  ],
+  "known_issues": [
+    "Creating a listing consistently fails ('failed to load/list') even when signed in and fields are filled; likely image uploader is not actually uploading to the blob-storage canister before listing submission, causing backend rejection/timeouts."
+  ],
+  "isFixRequest": true,
+  "generatedImages": [
+    {
+      "filename": "frontend/public/assets/generated/fidget-market-logo.dim_512x512.png",
+      "description": "Generated logo asset for the fidget marketplace branding.",
+      "targetWidth": 512,
+      "targetHeight": 512
+    },
+    {
+      "filename": "frontend/public/assets/generated/fidget-mascot.dim_768x768.png",
+      "description": "Generated mascot image used in branding/marketing UI.",
+      "targetWidth": 768,
+      "targetHeight": 768
+    },
+    {
+      "filename": "frontend/public/assets/generated/fidget-pattern.dim_1600x900.png",
+      "description": "Generated background pattern image for UI theming.",
+      "targetWidth": 1600,
+      "targetHeight": 900
+    }
+  ],
+  "projectName": "SBICON",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

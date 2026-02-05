@@ -1,0 +1,72 @@
+{
+  "kind": "build_request",
+  "title": "Fix listing creation failure by ensuring seller profile exists and surfacing real canister errors",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Fix the root cause of “Failed to create listing” so an authenticated user can successfully create a listing from /sell/create even if they have never created a seller profile before. Implement a robust flow that guarantees a seller profile exists before/when createListing runs (either auto-create server-side, or ensure creation client-side before submitting the listing, or both).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-12"
+        ],
+        "quotes": [
+          "its still says the same thing"
+        ]
+      },
+      "acceptanceCriteria": [
+        "An authenticated user with no existing seller profile can create a listing successfully from the Create Listing page",
+        "Listing creation no longer traps with \"Listing creation not allowed without seller profile\" in normal user flows"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Update the frontend Create Listing flow to display actionable error details when listing creation fails, instead of only showing a generic toast. Parse and show the underlying canister error/trap message (in English) in the toast (or a user-friendly mapped message when appropriate).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-12"
+        ],
+        "quotes": [
+          "its still says the same thing"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When createListing fails, the UI shows the real error message (or a clear mapped message) rather than only \"Failed to create listing\"",
+        "Errors are visible without opening the browser console"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add frontend support for seller profile creation so users can become sellers in-app: implement a React Query mutation hook for createSellerProfile, and integrate it into the existing profile setup experience so the user can create/initialize a seller profile using their display name (or be prompted for one) before creating listings.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-12"
+        ],
+        "quotes": [
+          "its still says the same thing"
+        ]
+      },
+      "acceptanceCriteria": [
+        "There is a working frontend path that calls the backend createSellerProfile method",
+        "After completing profile setup, the user can create listings without hitting seller-profile-related traps"
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single-actor Motoko canister; keep all Motoko logic in backend/main.mo",
+    "Do not edit files under frontend/src/components/ui or any frontend immutablePaths listed in SYSTEM_CONTEXT",
+    "Use English for any user-facing text"
+  ],
+  "nonGoals": [
+    "Do not add third-party authentication providers (Internet Identity only)",
+    "Do not introduce external databases or non-Motoko backend services",
+    "Do not redesign unrelated marketplace browsing/listing detail features"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
