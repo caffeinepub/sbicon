@@ -7,6 +7,7 @@ import ListingDetailPage from './pages/ListingDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import SellCreateListingPage from './pages/SellCreateListingPage';
 import SellEditListingPage from './pages/SellEditListingPage';
+import PublishingSharePage from './pages/PublishingSharePage';
 
 // Root route with layout
 const rootRoute = createRootRoute({
@@ -48,6 +49,12 @@ const sellEditRoute = createRoute({
   component: SellEditListingPage,
 });
 
+const publishingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/publishing',
+  component: PublishingSharePage,
+});
+
 // Create route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -55,6 +62,7 @@ const routeTree = rootRoute.addChildren([
   profileRoute,
   sellCreateRoute,
   sellEditRoute,
+  publishingRoute,
 ]);
 
 // Create router

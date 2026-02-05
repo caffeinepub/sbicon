@@ -1,118 +1,177 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
-  "summary": "SBICON: Internet Computer (Motoko + React) marketplace/reselling app for fidget toy listings, with Internet Identity auth, seller dashboard for managing listings/images, and a standard product catalog to create listings from selection; image uploads are backed by a blob-storage canister.",
+  "projectStateVersion": 3,
+  "summary": "Fidget Market is an Internet Computer (Motoko) + React marketplace app for kid-friendly fidget-toy listings. Users authenticate with Internet Identity, set up a user profile (display name), optionally create a seller profile, and create/edit/remove listings with images. The backend canister enforces role-based access control (admin/user/guest), stores user/seller profiles and listings, and includes a blob-storage maintenance mixin for storage gateway authorization, dead-blob cleanup, and cycles refills.",
   "existing_features": [
     {
       "id": "IF-1",
-      "title": "Internet Identity authentication & actor initialization",
+      "title": "Marketplace canister core domain (users, sellers, listings)",
       "synonyms": [
-        "II auth",
-        "login/logout"
+        "marketplace backend",
+        "Motoko marketplace canister"
       ],
-      "description": "Frontend integrates Internet Identity for sign-in and initializes an authenticated/anonymous backend actor for calls.",
+      "description": "Motoko canister defines and stores UserProfile, SellerProfile, and Listing records, with in-memory Maps for profiles and listings and basic marketplace query endpoints.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-2",
-      "title": "User profile management",
+      "title": "Role-based access control with admin bootstrap secret",
       "synonyms": [
-        "profile",
-        "display name"
+        "RBAC",
+        "access-control",
+        "admin token initialization"
       ],
-      "description": "Create/update and fetch current user profile; display seller names via profile data.",
+      "description": "Implements admin/user/guest roles; first initialization assigns admin if the caller supplies a secret matching an environment variable, otherwise assigns user; supports admin-only role assignment and role checks for protected methods.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-3",
-      "title": "Listings marketplace (browse, filter, detail views)",
+      "title": "Frontend Internet Identity authentication",
       "synonyms": [
-        "home feed",
-        "listing grid",
-        "listing detail"
+        "Internet Identity login",
+        "II auth"
       ],
-      "description": "Browse listings in a grid, filter by category, and view listing detail pages; includes seller discovery/listing queries.",
+      "description": "Provides a React context for Internet Identity using @dfinity/auth-client, including persisted delegation handling, login/logout, and a LoginButton with state handling.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-4",
-      "title": "Listing CRUD for sellers (create, edit, deactivate)",
+      "title": "Backend actor creation and access-control initialization",
       "synonyms": [
-        "sell flow",
-        "my listings"
+        "useActor",
+        "authenticated actor"
       ],
-      "description": "Authenticated sellers can create and edit listings and deactivate (remove from active marketplace) their listings; includes dedicated Sell pages and My Listings query.",
+      "description": "Creates anonymous or authenticated canister actors based on identity; for authenticated users, calls _initializeAccessControlWithSecret using a secret read from URL hash/session and refreshes React Query caches when the actor changes.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-5",
-      "title": "Image upload & blob storage integration",
+      "title": "User profile management (save and fetch)",
       "synonyms": [
-        "image uploader",
-        "asset storage"
+        "display name profile",
+        "user profile CRUD"
       ],
-      "description": "Upload listing images via a storage client connected to a blob-storage canister; generated branding assets included in frontend public assets.",
+      "description": "Allows authenticated users to save their own profile (displayName) and fetch it; backend enforces user-only access and restricts viewing other users’ profiles to self or admin.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-6",
-      "title": "Authorization/access control scaffolding (Motoko)",
+      "title": "Seller profiles and seller directory",
       "synonyms": [
-        "auth mixins",
-        "access-control"
+        "seller onboarding",
+        "seller profile lookup"
       ],
-      "description": "Backend includes authorization and access-control modules/mixins to gate protected actions and standardize permissions checks.",
+      "description": "Backend supports checking seller status, creating a seller profile, listing all sellers, and fetching a seller profile by principal; frontend includes query/mutation hooks and a SellerDisplayName component.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-7",
-      "title": "UI framework and app layout (React + Tailwind + shadcn/ui)",
+      "title": "Auto-create seller profile during listing creation",
       "synonyms": [
-        "design system",
-        "components"
+        "ensureSellerProfile",
+        "implicit seller creation"
       ],
-      "description": "Tailwind + shadcn/ui component set wired into an application layout with common empty/loading states and branding header.",
+      "description": "Backend createListing ensures the caller has a SellerProfile, auto-creating one using the user profile display name (or a default principal-based name) if missing.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-8",
-      "title": "Build/deploy template for ICP (Docker/build scripts/config)",
+      "title": "Listing CRUD with ownership checks",
       "synonyms": [
-        "build-template",
-        "deployment scaffolding"
+        "create/update/delete listing",
+        "seller listing management"
       ],
-      "description": "Project includes build-template assets (Dockerfile, scripts, canister configs) for building and deploying the app to ICP.",
+      "description": "Authenticated users can create listings; sellers can update and deactivate their own listings; backend enforces ownership; listings are available via getListing and getListingsBySeller.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "feature-fix-the-root-cause-of-failed-to-create-listing-so-an-authenticated-user-can-successfully-create-a-listing-from-sell-create-even-if-they-have-never-created-a-seller-profile-before-implement-a-robust-flow-that-guarantees-a-seller-profile-exists-before-when-createlisting-runs-either-auto-create-server-side-or-ensure-creation-client-side-before-submitting-the-listing-or-both",
-      "title": "Fix the root cause of “Failed to create listing” so an authenticated user can successfully create a listing from /sell/create even if they have never created a seller profile before. Implement a robust flow that guarantees a seller profile exists before/when createListing runs (either auto-create server-side, or ensure creation client-side before submitting the listing, or both).",
+      "id": "IF-9",
+      "title": "Marketplace browsing UI and routing",
+      "synonyms": [
+        "home feed",
+        "listing detail pages"
+      ],
+      "description": "React SPA routes include home browse page, listing detail page with image carousel, profile page, and seller create/edit listing pages; navigation uses TanStack Router.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-10",
+      "title": "Listing form with presets, validation, and images",
+      "synonyms": [
+        "sell form",
+        "listing templates"
+      ],
+      "description": "Reusable ListingForm supports create/edit, optional preset auto-fill, field validation, price conversion to cents (BigInt), and up to 3 images via ImageUploader with previews/removal.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-11",
+      "title": "Client-side search and category filtering",
+      "synonyms": [
+        "listing filter",
+        "search UI"
+      ],
+      "description": "Home page filters aggregated listings by search term and a simple category button group (Pop-it/Spinner/Squishy/Cube/Other) using title-based matching.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-12",
+      "title": "Actionable error handling for canister calls",
+      "synonyms": [
+        "canister error parsing",
+        "user-friendly toasts"
+      ],
+      "description": "Frontend includes parseCanisterError to extract trap/reject messages and map common backend errors to friendly text; used in listing creation and profile setup flows with toast notifications.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-13",
+      "title": "Blob-storage maintenance endpoints and authorization registry",
+      "synonyms": [
+        "storage gateway authorization",
+        "dead blob pruning",
+        "cycles refill"
+      ],
+      "description": "Includes a blob-storage mixin providing endpoints to update authorized gateway principals from a cashier canister, list/prune dead blobs with authorization checks, and refill the cashier with available cycles.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-14",
+      "title": "UI theming and reusable layout states",
+      "synonyms": [
+        "AppLayout",
+        "tailwind/shadcn UI"
+      ],
+      "description": "AppLayout provides consistent header/nav/footer and background styling; shared LoadingState and EmptyState components handle common UX states; ThemeProvider enables light/dark mode.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-small-in-app-publishing-share-section-that-clearly-explains-the-app-is-published-as-a-web-app-on-the-internet-computer-not-google-hosting-and-provides-the-current-public-site-url-based-on-window-location-origin-with-a-one-click-copy-to-clipboard-action",
+      "title": "Add a small in-app “Publishing / Share” section that clearly explains the app is published as a web app on the Internet Computer (not Google hosting), and provides the current public site URL (based on window.location.origin) with a one-click copy-to-clipboard action.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-the-frontend-create-listing-flow-to-display-actionable-error-details-when-listing-creation-fails-instead-of-only-showing-a-generic-toast-parse-and-show-the-underlying-canister-error-trap-message-in-english-in-the-toast-or-a-user-friendly-mapped-message-when-appropriate",
-      "title": "Update the frontend Create Listing flow to display actionable error details when listing creation fails, instead of only showing a generic toast. Parse and show the underlying canister error/trap message (in English) in the toast (or a user-friendly mapped message when appropriate).",
+      "id": "feature-ensure-any-user-facing-text-added-for-publishing-uses-clear-english-phrasing-and-avoids-implying-google-cloud-google-play-deployment-is-available",
+      "title": "Ensure any user-facing text added for publishing uses clear English phrasing and avoids implying Google Cloud / Google Play deployment is available.",
       "reqIds": [
         "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-frontend-support-for-seller-profile-creation-so-users-can-become-sellers-in-app-implement-a-react-query-mutation-hook-for-createsellerprofile-and-integrate-it-into-the-existing-profile-setup-experience-so-the-user-can-create-initialize-a-seller-profile-using-their-display-name-or-be-prompted-for-one-before-creating-listings",
-      "title": "Add frontend support for seller profile creation so users can become sellers in-app: implement a React Query mutation hook for createSellerProfile, and integrate it into the existing profile setup experience so the user can create/initialize a seller profile using their display name (or be prompted for one) before creating listings.",
-      "reqIds": [
-        "REQ-3"
       ],
       "version": 1
     }
@@ -120,51 +179,36 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add a seller dashboard UI to create/edit/deactivate listings and upload/manage listing photos from one place.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Provide a standard product catalog/list so sellers can create listings by selecting a pre-defined product (with optional category selector).",
+      "summary": "Support publishing/deploying the Fidget Market web app to a Google-hosted destination (e.g., Google Cloud hosting) in addition to Internet Computer deployment.",
       "reqIds": [],
       "status": "pending"
     }
   ],
   "architectural_notes": [
-    "Architecture: Internet Computer app with Motoko backend canister(s) and React/Vite frontend.",
-    "Auth: Uses Internet Identity; frontend maintains authenticated vs anonymous actors for backend calls.",
-    "Storage: Separate blob-storage canister/module used for listing image uploads and retrieval.",
-    "UI: Tailwind + shadcn/ui component library for consistent UI primitives and layout.",
-    "Backend: Authorization/access-control modules provide reusable permission checks for protected methods.",
-    "Build template now includes a full React/Vite + Tailwind + shadcn/ui scaffold (pnpm workspace) with ICP canister YAMLs for frontend/backend.",
-    "Build tooling: image maintenance scripts (resize/prune unused images) and custom ESLint rules (e.g., enforce Internet Identity provider usage, prevent BigInt in query keys)."
+    "Internet Computer architecture: a Motoko marketplace canister (backend/main.mo) with a React SPA frontend.",
+    "Motoko canister composition via mixins: authorization (MixinAuthorization) and blob-storage maintenance endpoints (blob-storage/Mixin).",
+    "Role-based access control module (access-control.mo) with first-time initialization that assigns roles and supports admin role assignment.",
+    "Frontend uses TanStack Router for routing and @tanstack/react-query for caching, mutations, and query invalidation.",
+    "Custom actor lifecycle hook (useActor) recreates an authenticated/anonymous backend actor based on Internet Identity state and forces dependent query refetches when the actor changes.",
+    "Internet Identity integration via @dfinity/auth-client with a React context provider (useInternetIdentity) and explicit login/logout UI.",
+    "Sensitive “admin token” handling via hash-fragment secrets persisted to sessionStorage and removed from URL (utils/urlParams.ts).",
+    "Listings browsing is done by fetching all sellers and aggregating their embedded listing arrays client-side (useGetAllListings).",
+    "UI is built with TailwindCSS + shadcn/ui primitives, common loading/empty-state components, and theme support (next-themes).",
+    "Blob-storage maintenance uses IC prim storage APIs (e.g., getDeadBlobs/pruneConfirmedDeadBlobs) and an authorization registry refreshed from a “cashier” canister."
   ],
   "known_issues": [
-    "Creating a listing consistently fails ('failed to load/list') even when signed in and fields are filled; likely image uploader is not actually uploading to the blob-storage canister before listing submission, causing backend rejection/timeouts."
+    "Listing images are stored/handled as data URLs in frontend and persisted directly as Text arrays in listing records; this can bloat canister state and may hit message/state size limits. The included blob-storage canister/mixin is not actually used by the ImageUploader/listing flow.",
+    "Access-control initialization depends on the CAFFEINE_ADMIN_TOKEN environment variable; if missing, authenticated actor initialization (_initializeAccessControlWithSecret) will trap and can break the app for logged-in users.",
+    "Storage cashier principal env var name appears misspelled as CAFFFEINE_STORAGE_CASHIER_PRINCIPAL (extra 'F'), which can cause runtime traps if deployments use the expected spelling.",
+    "AccessControl.getUserRole traps with \"User is not registered\" until initialization runs; any call path that bypasses frontend’s initialization step can fail unexpectedly.",
+    "Profile setup flow always attempts createSellerProfile after saving user profile; if a seller profile was auto-created earlier (e.g., via createListing), createSellerProfile traps (“already exists”) and the UI may not close the setup dialog even though the user profile save succeeded.",
+    "Listing IDs are generated as \"<title> #<increment>\"; IDs are not sanitized/URL-friendly and may be unstable/awkward for long titles or repeated titles.",
+    "Two sources of truth for listings exist (global listings map and sellerProfiles[].listings); frontend “all listings” view relies on sellerProfiles listings, so any divergence could lead to inconsistent results.",
+    "No server-side pagination/search/filtering; home page potentially loads all sellers and all listings on every refresh, which may not scale well."
   ],
-  "isFixRequest": true,
-  "generatedImages": [
-    {
-      "filename": "frontend/public/assets/generated/fidget-market-logo.dim_512x512.png",
-      "description": "Generated logo asset for the fidget marketplace branding.",
-      "targetWidth": 512,
-      "targetHeight": 512
-    },
-    {
-      "filename": "frontend/public/assets/generated/fidget-mascot.dim_768x768.png",
-      "description": "Generated mascot image used in branding/marketing UI.",
-      "targetWidth": 768,
-      "targetHeight": 768
-    },
-    {
-      "filename": "frontend/public/assets/generated/fidget-pattern.dim_1600x900.png",
-      "description": "Generated background pattern image for UI theming.",
-      "targetWidth": 1600,
-      "targetHeight": 900
-    }
-  ],
-  "projectName": "SBICON",
+  "isFixRequest": false,
+  "gameProjectType": "none",
+  "projectName": "Fidget Market",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -1,11 +1,11 @@
 {
-  "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all routes (home, listing detail, profile, create/edit listing) wrapped in AppLayout with ThemeProvider and Toaster.",
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all routes (home, listing detail, profile, create/edit listing, publishing) wrapped in AppLayout with ThemeProvider and Toaster.",
   "frontend/src/pages/HomePage.tsx": "Landing page with hero section featuring brand assets, search input, category filter, and listing grid displaying all available fidget toys.",
   "frontend/src/pages/ListingDetailPage.tsx": "Detailed view of a single listing with image carousel, price, quantity, description, seller info, and owner-only edit/delete actions.",
   "frontend/src/pages/ProfilePage.tsx": "User profile page with display name setup dialog that now also creates seller profile during initial setup, profile header, and \"My Listings\" section with proper error handling.",
   "frontend/src/pages/SellCreateListingPage.tsx": "Authenticated page for creating new listings with ListingForm component, proper error parsing using canisterErrors utility, and navigation back to profile.",
   "frontend/src/pages/SellEditListingPage.tsx": "Authenticated page for editing existing listings with ownership verification and pre-populated form data.",
-  "frontend/src/components/layout/AppLayout.tsx": "Main layout wrapper with sticky header (logo, navigation, login button), subtle background pattern, main content area, and footer with attribution.",
+  "frontend/src/components/layout/AppLayout.tsx": "Main layout wrapper with sticky header (logo, navigation, login button), subtle background pattern, main content area, and footer with attribution and Publishing/Share link.",
   "frontend/src/components/auth/LoginButton.tsx": "Internet Identity login/logout button with loading states and query cache clearing on logout.",
   "frontend/src/components/branding/BrandHeader.tsx": "Component displaying the generated logo and animated mascot images from the assets folder.",
   "frontend/src/components/listings/ListingGrid.tsx": "Grid layout component for displaying listing cards with loading and empty states.",
@@ -30,5 +30,6 @@
   "frontend/src/components/listings/listingPresets.ts": "Defines 6 preset listing templates for common fidget toys with default values for title, description, price, and quantity.",
   "frontend/src/utils/canisterErrors.ts": "Utility to parse and normalize backend canister errors (including trap messages) into user-friendly error messages with specific mappings for common error scenarios.",
   "frontend/src/hooks/mutations/useCreateSellerProfile.ts": "React Query mutation hook for creating seller profiles via the backend createSellerProfile method with proper cache invalidation.",
-  "frontend/src/hooks/queries/useIsSeller.ts": "React Query hook for checking if the current user has seller status with proper actor dependency handling."
+  "frontend/src/hooks/queries/useIsSeller.ts": "React Query hook for checking if the current user has seller status with proper actor dependency handling.",
+  "frontend/src/pages/PublishingSharePage.tsx": "Dedicated page explaining ICP hosting with public URL display and one-click copy-to-clipboard functionality using the browser clipboard API and toast notifications."
 }

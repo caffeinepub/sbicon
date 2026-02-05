@@ -2,11 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-fix-the-root-cause-of-failed-to-create-listing-so-an-authenticated-user-can-successfully-create-a-listing-from-sell-create-even-if-they-have-never-created-a-seller-profile-before-implement-a-robust-flow-that-guarantees-a-seller-profile-exists-before-when-createlisting-runs-either-auto-create-server-side-or-ensure-creation-client-side-before-submitting-the-listing-or-both",
-      "featureTitle": "Fix the root cause of “Failed to create listing” so an authenticated user can successfully create a listing from /sell/create even if they have never created a seller profile before. Implement a robust flow that guarantees a seller profile exists before/when createListing runs (either auto-create server-side, or ensure creation client-side before submitting the listing, or both).",
+      "featureId": "feature-add-a-small-in-app-publishing-share-section-that-clearly-explains-the-app-is-published-as-a-web-app-on-the-internet-computer-not-google-hosting-and-provides-the-current-public-site-url-based-on-window-location-origin-with-a-one-click-copy-to-clipboard-action",
+      "featureTitle": "Add a small in-app “Publishing / Share” section that clearly explains the app is published as a web app on the Internet Computer (not Google hosting), and provides the current public site URL (based on window.location.origin) with a one-click copy-to-clipboard action.",
       "files": [
-        "frontend/src/hooks/mutations/useCreateListing.ts",
-        "frontend/src/pages/SellCreateListingPage.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/pages/PublishingSharePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -23,11 +24,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-frontend-create-listing-flow-to-display-actionable-error-details-when-listing-creation-fails-instead-of-only-showing-a-generic-toast-parse-and-show-the-underlying-canister-error-trap-message-in-english-in-the-toast-or-a-user-friendly-mapped-message-when-appropriate",
-      "featureTitle": "Update the frontend Create Listing flow to display actionable error details when listing creation fails, instead of only showing a generic toast. Parse and show the underlying canister error/trap message (in English) in the toast (or a user-friendly mapped message when appropriate).",
+      "featureId": "feature-ensure-any-user-facing-text-added-for-publishing-uses-clear-english-phrasing-and-avoids-implying-google-cloud-google-play-deployment-is-available",
+      "featureTitle": "Ensure any user-facing text added for publishing uses clear English phrasing and avoids implying Google Cloud / Google Play deployment is available.",
       "files": [
-        "frontend/src/pages/SellCreateListingPage.tsx",
-        "frontend/src/utils/canisterErrors.ts"
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/pages/PublishingSharePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -40,28 +41,6 @@
       ],
       "testIds": [
         "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-frontend-support-for-seller-profile-creation-so-users-can-become-sellers-in-app-implement-a-react-query-mutation-hook-for-createsellerprofile-and-integrate-it-into-the-existing-profile-setup-experience-so-the-user-can-create-initialize-a-seller-profile-using-their-display-name-or-be-prompted-for-one-before-creating-listings",
-      "featureTitle": "Add frontend support for seller profile creation so users can become sellers in-app: implement a React Query mutation hook for createSellerProfile, and integrate it into the existing profile setup experience so the user can create/initialize a seller profile using their display name (or be prompted for one) before creating listings.",
-      "files": [
-        "frontend/src/hooks/mutations/useCreateSellerProfile.ts",
-        "frontend/src/pages/ProfilePage.tsx",
-        "frontend/src/pages/SellCreateListingPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
       ],
       "confidence": "high"
     }

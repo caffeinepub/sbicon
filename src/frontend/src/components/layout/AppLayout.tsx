@@ -57,6 +57,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             >
               caffeine.ai
             </a>
+            {' · '}
+            <Link
+              to="/publishing"
+              className="hover:text-orange-500 transition-colors underline"
+            >
+              Publishing / Share
+            </Link>
           </p>
         </div>
       </footer>

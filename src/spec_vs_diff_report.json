@@ -1,56 +1,41 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T03:59:03.421Z",
-  "summary": "REQ-2 and REQ-3 appear implemented on the frontend via a canister error parser, improved toasts, and a createSellerProfile mutation integrated into ProfilePage. REQ-1 is not clearly satisfied from the provided diff summary because there is no direct evidence that backend createListing now guarantees a seller profile exists; additionally, some new user-facing strings include emojis, conflicting with the “English for any user-facing text” constraint.",
+  "generatedAt": "2026-02-05T12:50:22.156Z",
+  "summary": "Implemented a new Publishing/Share page routed at /publishing and linked from the main footer. The page shows the current public URL (window.location.origin), provides a copy-to-clipboard action, and displays toast feedback. However, explicit in-app text stating Google hosting is not supported is not clearly evidenced in the provided diff (page content is truncated and visible sections do not mention Google hosting).",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "Guarantee a seller profile exists before/when createListing runs so an authenticated user without a seller profile can create a listing without trapping.",
-      "reason": "The diff summary does not show any changes to backend createListing (or any server-side auto-create logic) that would prevent the seller-profile trap; the frontend mutation only adds a comment claiming the backend now auto-creates seller profiles.",
+      "requirement": "The Publishing / Share section contains English text stating that publishing/deployment is to the Internet Computer and that Google hosting is not supported in this project.",
+      "reason": "The added page text clearly states hosting on the Internet Computer, but the visible (non-truncated) content does not explicitly say that Google hosting is not supported. The remainder of the file is truncated, so this requirement cannot be verified as implemented from the provided diff.",
       "evidence": [
-        "frontend/src/hooks/mutations/useCreateListing.ts (comment: \"The backend now auto-creates seller profile if needed\")",
-        "backend/main.mo (truncated; no createListing implementation shown)"
+        "frontend/src/pages/PublishingSharePage.tsx (truncated)"
+      ]
+    },
+    {
+      "id": "REQ-1",
+      "requirement": "The section displays the current public URL and includes a “Copy link” button.",
+      "reason": "The URL is displayed and a copy action exists, but the control appears to be an icon-only button (Copy/Check icons) without the explicit “Copy link” label shown in the diff summary; this may not meet the stated acceptance criteria as written.",
+      "evidence": [
+        "frontend/src/pages/PublishingSharePage.tsx (truncated)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Added a new seller-status query hook (useIsSeller).",
-      "reason": "REQ-1/2/3 do not explicitly request a dedicated isSeller query hook; it may be useful, but it is extra relative to the stated requirements.",
+      "description": "Footer attribution/link to caffeine.ai and the 'Built with ❤️' copy.",
+      "reason": "Not requested by the BuildRequest requirements; appears to be newly included as part of the modified footer content.",
       "evidence": [
-        "frontend/src/hooks/queries/useIsSeller.ts"
-      ]
-    },
-    {
-      "description": "Introduced a backend migration module and wired it into the canister actor.",
-      "reason": "No requirement mentions adding migrations; this is additional infrastructure beyond the requested fix.",
-      "evidence": [
-        "backend/migration.mo",
-        "backend/main.mo (\"import Migration \\\"migration\\\"\" and \"with migration = Migration.run\")"
-      ]
-    },
-    {
-      "description": "Added emojis in user-facing UI strings.",
-      "reason": "Constraint requires English for user-facing text; emojis are non-English symbols and were not requested as part of the UX changes.",
-      "evidence": [
-        "frontend/src/pages/ProfilePage.tsx (\"Welcome! 🎉\", profile setup description text, success toast)",
-        "frontend/src/pages/SellCreateListingPage.tsx (\"Listing created successfully! 🎉\", \"Create New Listing 🎮\")"
+        "frontend/src/components/layout/AppLayout.tsx"
       ]
     }
   ],
   "confidence": 0.62,
   "changed_files": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/hooks/mutations/useCreateListing.ts",
-    "frontend/src/hooks/mutations/useCreateSellerProfile.ts",
-    "frontend/src/hooks/mutations/useSaveUserProfile.ts",
-    "frontend/src/hooks/queries/useIsSeller.ts",
-    "frontend/src/pages/ProfilePage.tsx",
-    "frontend/src/pages/SellCreateListingPage.tsx",
-    "frontend/src/utils/canisterErrors.ts",
+    "frontend/src/App.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/pages/PublishingSharePage.tsx",
     "project_state.json"
   ]
 }

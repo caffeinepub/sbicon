@@ -1,75 +1,52 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix listing creation by ensuring seller profile existence and surfacing canister errors (frontend-only)",
+  "title": "In-app Publishing/Share section with copyable public URL (ICP-only)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Ensure the Create Listing flow guarantees a seller profile exists before attempting listing creation, even for first-time sellers.",
+      "summary": "Add a main-UI-accessible “Publishing / Share” section explaining ICP hosting and showing a copy-to-clipboard public URL with confirmation.",
       "acceptanceCriteria": [
-        "An authenticated user with no existing seller profile can create a listing successfully from the Create Listing page",
-        "Listing creation no longer traps with \"Listing creation not allowed without seller profile\" in normal user flows"
+        "A user can find a “Publishing / Share” section from the main UI (e.g., footer link, header menu item, or a simple settings/about page).",
+        "The section contains English text stating that publishing/deployment is to the Internet Computer and that Google hosting is not supported in this project.",
+        "The section displays the current public URL (window.location.origin) and includes a “Copy link” button.",
+        "Clicking “Copy link” copies the URL to the clipboard and shows a success toast (or equivalent non-intrusive confirmation)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/mutations/useCreateListing.ts",
-          "operation": "modify",
-          "description": "Update the createListing mutation to ensure the caller has a seller profile before calling the backend createListing capability (e.g., check isSeller and, if needed, createSellerProfile using an available display name). Ensure missing prerequisites produce actionable thrown errors for the UI."
+          "path": "frontend/src/pages/PublishingSharePage.tsx",
+          "operation": "create",
+          "description": "Create a dedicated “Publishing / Share” page that: (1) explains the app is published as a web app on the Internet Computer (ICP) and that Google hosting is not supported, (2) reads and displays the current public URL using window.location.origin, and (3) provides a one-click “Copy link” action using the browser clipboard API with a success confirmation using the existing toast system (sonner). Use shadcn/ui components (e.g., Card, Button) for layout and actions; verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/pages/SellCreateListingPage.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Gate listing submission on a robust 'ensure seller profile' step: if the user lacks a seller profile, trigger seller profile initialization (auto-create when possible) before submitting the listing, and only proceed to createListing after seller status is confirmed."
+          "description": "Register and wire a new route (e.g., /publishing) to PublishingSharePage so it is navigable within the app. Ensure the route is added to the route tree. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/hooks/queries/useCurrentUserProfile.ts",
+          "path": "frontend/src/components/layout/AppLayout.tsx",
           "operation": "modify",
-          "description": "Extend current-user profile querying to support the Create Listing prerequisites flow (e.g., expose enough state to safely decide whether a display name is available for seller-profile auto-creation). Use the authorization component’s recommended actor-aware loading pattern for profile setup flows; verify the component's usage instructions before implementing."
+          "description": "Add a visible link in the main UI (footer is preferred to keep nav minimal) labeled “Publishing / Share” that navigates to the new PublishingSharePage route. Keep it consistent with existing TanStack Router Link usage. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Show actionable canister error details in the Create Listing UI instead of a generic failure toast.",
+      "summary": "Ensure newly added publishing-related UI copy is clear English and explicitly avoids implying Google deployment options exist.",
       "acceptanceCriteria": [
-        "When createListing fails, the UI shows the real error message (or a clear mapped message) rather than only \"Failed to create listing\"",
-        "Errors are visible without opening the browser console"
+        "No new UI copy suggests the app can be deployed to Google Cloud / Google Play.",
+        "All newly added user-facing strings are in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/canisterErrors.ts",
-          "operation": "create",
-          "description": "Add a small utility to normalize/parse backend and agent errors into an English message suitable for UI (extract trap text when present; optionally map known messages like missing seller profile into clearer user-facing guidance)."
+          "path": "frontend/src/pages/PublishingSharePage.tsx",
+          "operation": "modify",
+          "description": "Review and refine all user-facing strings in the Publishing / Share UI to ensure clear English phrasing, explicitly ICP-focused hosting/deployment guidance, and no implication of Google Cloud/Google Play availability. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/pages/SellCreateListingPage.tsx",
+          "path": "frontend/src/components/layout/AppLayout.tsx",
           "operation": "modify",
-          "description": "Replace the generic error toast with a toast showing the parsed underlying canister/trap error message (or mapped message) using the new error utility."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Add a React Query mutation hook for createSellerProfile and integrate seller profile setup into the existing profile setup experience (and Create Listing prerequisite flow).",
-      "acceptanceCriteria": [
-        "There is a working frontend path that calls the backend createSellerProfile method",
-        "After completing profile setup, the user can create listings without hitting seller-profile-related traps"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/mutations/useCreateSellerProfile.ts",
-          "operation": "create",
-          "description": "Implement a React Query mutation hook that calls the backend createSellerProfile capability and invalidates any seller- or profile-related queries as needed."
-        },
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Integrate seller profile initialization into the existing profile setup dialog/flow: after the user provides a display name (or confirms it), call createSellerProfile so the user becomes a seller in-app before creating listings. Use the authorization component’s guidance for authenticated profile setup UX; verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/pages/SellCreateListingPage.tsx",
-          "operation": "modify",
-          "description": "Use the new createSellerProfile mutation (directly or indirectly via useCreateListing) so the Create Listing page can initialize seller status using the user’s display name (or guide them to provide one) before attempting listing creation."
+          "description": "Ensure the new navigation link label (“Publishing / Share”) and any surrounding footer text added/adjusted is in clear English and does not imply Google deployment. Verify the component's usage instructions before implementing."
         }
       ]
     }
