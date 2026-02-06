@@ -1,7 +1,7 @@
 {
   "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all routes (home, listing detail, profile, create/edit listing, publishing) wrapped in AppLayout with ThemeProvider and Toaster.",
-  "frontend/src/pages/HomePage.tsx": "Landing page with hero section featuring brand assets, search input, category filter, and listing grid displaying all available fidget toys.",
-  "frontend/src/pages/ListingDetailPage.tsx": "Detailed view of a single listing with image carousel, price, quantity, description, seller info, copy link button for sharing the public URL, publishing guidance with link to /publishing page, and owner-only edit/delete actions.",
+  "frontend/src/pages/HomePage.tsx": "Landing page with hero section, brand assets, search input, category filter, listing grid, and \"How It Works\" alert explaining the buyer-seller contact process with corrected prop name for CategoryFilter component.",
+  "frontend/src/pages/ListingDetailPage.tsx": "Detailed listing view with image carousel, price, description, seller info, and context-aware actions: \"Contact Seller\" dialog with seller ID for buyers, login prompt for guests, and edit/delete controls for owners, plus share and publishing guidance sections.",
   "frontend/src/pages/ProfilePage.tsx": "User profile page with display name setup dialog that now also creates seller profile during initial setup, profile header, and \"My Listings\" section with proper error handling.",
   "frontend/src/pages/SellCreateListingPage.tsx": "Authenticated page for creating new listings with ListingForm component that navigates to the newly created listing detail page after successful creation.",
   "frontend/src/pages/SellEditListingPage.tsx": "Authenticated page for editing existing listings with ownership verification and pre-populated form data.",

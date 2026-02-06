@@ -1,37 +1,24 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T00:35:20.983Z",
+  "generatedAt": "2026-02-06T01:26:32.934Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
-    "items": [
-      {
-        "id": "REQ-1",
-        "summary": "Add a guided \"Custom Domain\" input and validation flow in the existing Publishing & Share page so users can enter the exact domain they own and see a clean, canonical URL to use for `VITE_PUBLIC_URL`.\n\nThe flow must:\n- Provide an input that accepts either a bare domain (e.g., `example.com`) or an HTTPS URL (e.g., `https://example.com`).\n- Reject and show an English error message for:\n  - URLs containing a path, querystring, or fragment (e.g., `https://example.com/page?x=1`).\n  - Well-known third-party domains the user clearly does not own (at minimum block `google.com` and `www.google.com`).\n- Normalize the accepted value into a canonical HTTPS URL (e.g., `example.com` -> `https://example.com`, `https://example.com/` -> `https://example.com`).\n- Display a copy-to-clipboard control that copies an `.env` snippet line in the exact form: `VITE_PUBLIC_URL=https://example.com`.\n- Persist the entered domain value locally (e.g., localStorage) so it remains visible across reloads.\n- Include clear English guidance stating that changing the domain in the UI does not automatically connect DNS; the user must configure DNS at their registrar and then rebuild/redeploy with `VITE_PUBLIC_URL` set.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/utils/customDomain.ts",
-          "frontend/src/pages/PublishingSharePage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/utils/customDomain.ts",
-          "frontend/src/pages/PublishingSharePage.tsx"
-        ]
-      }
-    ]
+    "total": 0,
+    "implemented": 0,
+    "items": []
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/pages/PublishingSharePage.tsx",
-    "frontend/src/utils/customDomain.ts",
+    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/pages/ListingDetailPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

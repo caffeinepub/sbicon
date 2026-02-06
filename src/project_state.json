@@ -1,37 +1,20 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Website project being built/deployed with intent to connect a custom domain (domain not yet provided/owned).",
+  "summary": "Website needs e-commerce/marketplace functionality so users can list items and other people can buy them (end-to-end selling flow).",
   "architectural_notes": [],
-  "known_issues": [
-    "Custom domain cannot be connected until the user provides an exact domain name they own (not a Google URL)."
-  ],
+  "known_issues": [],
   "isFixRequest": false,
-  "existing_features": [
-    {
-      "id": "feature-add-a-guided-custom-domain-input-and-validation-flow-in-the-existing-publishing-share-page-so-users-can-enter-the-exact-domain-they-own-and-see-a-clean-canonical-url-to-use-for-vite-public-url-the-flow-must-provide-an-input-that-accepts-either-a-bare-domain-e-g-example-com-or-an-https-url-e-g-https-example-com-reject-and-show-an-english-error-message-for-urls-containing-a-path-querystring-or-fragment-e-g-https-example-com-page-x-1-well-known-third-party-domains-the-user-clearly-does-not-own-at-minimum-block-google-com-and-www-google-com-normalize-the-accepted-value-into-a-canonical-https-url-e-g-example-com-https-example-com-https-example-com-https-example-com-display-a-copy-to-clipboard-control-that-copies-an-env-snippet-line-in-the-exact-form-vite-public-url-https-example-com-persist-the-entered-domain-value-locally-e-g-localstorage-so-it-remains-visible-across-reloads-include-clear-english-guidance-stating-that-changing-the-domain-in-the-ui-does-not-automatically-connect-dns-the-user-must-configure-dns-at-their-registrar-and-then-rebuild-redeploy-with-vite-public-url-set",
-      "title": "Add a guided \"Custom Domain\" input and validation flow in the existing Publishing & Share page so users can enter the exact domain they own and see a clean, canonical URL to use for `VITE_PUBLIC_URL`.\n\nThe flow must:\n- Provide an input that accepts either a bare domain (e.g., `example.com`) or an HTTPS URL (e.g., `https://example.com`).\n- Reject and show an English error message for:\n  - URLs containing a path, querystring, or fragment (e.g., `https://example.com/page?x=1`).\n  - Well-known third-party domains the user clearly does not own (at minimum block `google.com` and `www.google.com`).\n- Normalize the accepted value into a canonical HTTPS URL (e.g., `example.com` -> `https://example.com`, `https://example.com/` -> `https://example.com`).\n- Display a copy-to-clipboard control that copies an `.env` snippet line in the exact form: `VITE_PUBLIC_URL=https://example.com`.\n- Persist the entered domain value locally (e.g., localStorage) so it remains visible across reloads.\n- Include clear English guidance stating that changing the domain in the UI does not automatically connect DNS; the user must configure DNS at their registrar and then rebuild/redeploy with `VITE_PUBLIC_URL` set.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    }
-  ],
+  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Deploy/build the user's website",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Connect a custom domain to the deployed website (requires the exact domain the user owns)",
+      "summary": "Add an end-to-end selling/buying flow for listed items (checkout, payments, and purchase management).",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Improve custom domain onboarding and website sharing flow",
+  "projectName": "Untitled request",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

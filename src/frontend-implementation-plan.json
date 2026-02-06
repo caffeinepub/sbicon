@@ -1,31 +1,6 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Guided custom domain onboarding on Publishing & Share page",
-  "requirements": [
-    {
-      "id": "REQ-1",
-      "summary": "Add a guided Custom Domain input with validation, canonicalization, copy-to-clipboard .env snippet, and local persistence on the Publishing & Share page.",
-      "acceptanceCriteria": [
-        "On the Publishing & Share page, users can enter a domain/URL and see the normalized canonical URL output.",
-        "If the user enters a URL with a path/query/fragment, the UI shows an English validation error and does not accept the value.",
-        "If the user enters `google.com` or `www.google.com` (with or without `https://`), the UI blocks it with an English explanation that they must use a domain they own.",
-        "A \"Copy\" action copies the exact string `VITE_PUBLIC_URL=https://<domain>` corresponding to the normalized canonical URL.",
-        "The entered domain is restored after a page refresh.",
-        "No immutable frontend paths are modified."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/utils/customDomain.ts",
-          "operation": "create",
-          "description": "Add a small utility to validate and normalize user-entered custom domain values: accept bare domains or HTTPS URLs, reject path/query/fragment, block well-known third-party domains (at minimum google.com and www.google.com), and return the canonical HTTPS URL string for display/copy."
-        },
-        {
-          "path": "frontend/src/pages/PublishingSharePage.tsx",
-          "operation": "modify",
-          "description": "In the existing \"Custom Domain\" section, compose existing shadcn/ui components (do not modify anything under frontend/src/components/ui) to add: (1) an input that accepts bare domain or HTTPS URL, (2) inline English validation error messaging for invalid inputs, (3) a canonical HTTPS URL output, (4) a copy-to-clipboard control that copies exactly `VITE_PUBLIC_URL=https://example.com` based on the normalized value, (5) localStorage persistence + restore of the raw entered value across reloads, and (6) clear English guidance that changing the value here does not connect DNS and the user must configure DNS at their registrar and then rebuild/redeploy with VITE_PUBLIC_URL set. Verify the component's usage instructions before implementing."
-        }
-      ]
-    }
-  ]
+  "title": "Untitled request",
+  "requirements": []
 }

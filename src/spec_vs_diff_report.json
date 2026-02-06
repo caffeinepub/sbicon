@@ -1,57 +1,40 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T00:35:20.980Z",
-  "summary": "Diff adds a custom domain validation/normalization utility with localStorage persistence and updates PublishingSharePage to load/save the input, validate it, and provide a copy-to-clipboard action for a VITE_PUBLIC_URL .env snippet. Core REQ-1 behaviors appear implemented, but the diff is truncated so some UI/guidance text cannot be fully verified.",
-  "missing_requirements": [
-    {
-      "id": "REQ-1",
-      "requirement": "Include clear English guidance stating that changing the domain in the UI does not automatically connect DNS; the user must configure DNS at their registrar and then rebuild/redeploy with VITE_PUBLIC_URL set.",
-      "reason": "PublishingSharePage.tsx is truncated before the relevant UI content; the diff summary shows validation/copy logic but does not show any explicit DNS guidance text.",
-      "evidence": [
-        "frontend/src/pages/PublishingSharePage.tsx (truncated)"
-      ]
-    },
-    {
-      "id": "REQ-1",
-      "requirement": "Display the normalized canonical URL output on the Publishing & Share page after entering a domain/URL.",
-      "reason": "Validation produces canonicalUrl and copy handler uses it, but the truncated page diff does not show the rendered section that displays the canonical URL to the user.",
-      "evidence": [
-        "frontend/src/pages/PublishingSharePage.tsx (truncated)",
-        "frontend/src/utils/customDomain.ts"
-      ]
-    },
-    {
-      "id": "REQ-1",
-      "requirement": "Show an English validation error in the UI and do not accept the value when a URL contains a path/query/fragment or is a blocked domain (google.com/www.google.com).",
-      "reason": "Validation errors are implemented in the utility, but the truncated page diff does not show how/where these errors are rendered to the user (e.g., inline error message).",
-      "evidence": [
-        "frontend/src/utils/customDomain.ts",
-        "frontend/src/pages/PublishingSharePage.tsx (truncated)"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-06T01:26:32.932Z",
+  "summary": "BuildRequest contains no stated requirements or acceptance criteria. The diff introduces substantial new marketplace backend and frontend functionality despite no requested changes.",
+  "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Blocks additional third-party domains beyond the minimum required (facebook.com, twitter.com, youtube.com, instagram.com and their www variants).",
-      "reason": "BuildRequest only required blocking google.com and www.google.com at minimum; additional blocked domains were not requested.",
+      "description": "Implemented marketplace/e-commerce backend canister functionality (listings, seller/user profiles, access control, storage mixins) without any stated requirements.",
+      "reason": "BuildRequest explicitly lists Requirements: none; these backend features are newly introduced/modified without a corresponding request.",
       "evidence": [
-        "frontend/src/utils/customDomain.ts"
+        "backend/main.mo"
       ]
     },
     {
-      "description": "Explicitly rejects http:// URLs with a specific error message requiring https://.",
-      "reason": "BuildRequest only stated the input accepts bare domains or HTTPS URLs; it did not request handling/rejecting http:// specifically.",
+      "description": "Added/modified frontend marketplace UI (home page hero/search/category filtering, listing detail page with contact seller/share/copy actions, profile and sell flows referenced in summaries) without any stated requirements.",
+      "reason": "No requested features were specified in the BuildRequest, but multiple UI pages and behaviors are implemented/changed.",
       "evidence": [
-        "frontend/src/utils/customDomain.ts"
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/ListingDetailPage.tsx",
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Introduced image upload handling and listing form enhancements (template selector, data URL storage, up to 3 images) without any stated requirements.",
+      "reason": "BuildRequest contains no requirements; these are additional product features described in the diff summaries.",
+      "evidence": [
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.74,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/pages/PublishingSharePage.tsx",
-    "frontend/src/utils/customDomain.ts",
+    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/pages/ListingDetailPage.tsx",
     "project_state.json"
   ]
 }
