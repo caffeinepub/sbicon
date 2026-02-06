@@ -1,42 +1,57 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T00:24:04.041Z",
-  "summary": "Most requested functionality for configurable canonical public URL, SEO metadata fallback, and sitemap generation based on VITE_PUBLIC_URL appears implemented. However, the diff summary does not provide evidence that the Publishing & Share page includes the required plain-English Custom Domain guidance checklist and disclaimers.",
+  "generatedAt": "2026-02-06T00:35:20.980Z",
+  "summary": "Diff adds a custom domain validation/normalization utility with localStorage persistence and updates PublishingSharePage to load/save the input, validate it, and provide a copy-to-clipboard action for a VITE_PUBLIC_URL .env snippet. Core REQ-1 behaviors appear implemented, but the diff is truncated so some UI/guidance text cannot be fully verified.",
   "missing_requirements": [
     {
-      "id": "REQ-4",
-      "requirement": "Add/confirm plain-English “Custom Domain” guidance on the Publishing & Share page explaining domain registration/DNS setup at registrar, propagation, and setting VITE_PUBLIC_URL + redeploying for SEO/sitemap updates, including stating the system does not purchase/register domains.",
-      "reason": "The modified Publishing & Share page content is truncated and the visible portion shows hosting and URL copy logic, but does not show any Custom Domain checklist/disclaimer text required by the acceptance criteria. No other file in the diff summary includes this guidance.",
+      "id": "REQ-1",
+      "requirement": "Include clear English guidance stating that changing the domain in the UI does not automatically connect DNS; the user must configure DNS at their registrar and then rebuild/redeploy with VITE_PUBLIC_URL set.",
+      "reason": "PublishingSharePage.tsx is truncated before the relevant UI content; the diff summary shows validation/copy logic but does not show any explicit DNS guidance text.",
       "evidence": [
+        "frontend/src/pages/PublishingSharePage.tsx (truncated)"
+      ]
+    },
+    {
+      "id": "REQ-1",
+      "requirement": "Display the normalized canonical URL output on the Publishing & Share page after entering a domain/URL.",
+      "reason": "Validation produces canonicalUrl and copy handler uses it, but the truncated page diff does not show the rendered section that displays the canonical URL to the user.",
+      "evidence": [
+        "frontend/src/pages/PublishingSharePage.tsx (truncated)",
+        "frontend/src/utils/customDomain.ts"
+      ]
+    },
+    {
+      "id": "REQ-1",
+      "requirement": "Show an English validation error in the UI and do not accept the value when a URL contains a path/query/fragment or is a blocked domain (google.com/www.google.com).",
+      "reason": "Validation errors are implemented in the utility, but the truncated page diff does not show how/where these errors are rendered to the user (e.g., inline error message).",
+      "evidence": [
+        "frontend/src/utils/customDomain.ts",
         "frontend/src/pages/PublishingSharePage.tsx (truncated)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Added Google Search Console verification meta tag using %VITE_GOOGLE_SITE_VERIFICATION%.",
-      "reason": "The BuildRequest focuses on VITE_PUBLIC_URL for canonical URLs/SEO/sitemap and custom domain guidance; it does not request adding Google site verification configuration.",
+      "description": "Blocks additional third-party domains beyond the minimum required (facebook.com, twitter.com, youtube.com, instagram.com and their www variants).",
+      "reason": "BuildRequest only required blocking google.com and www.google.com at minimum; additional blocked domains were not requested.",
       "evidence": [
-        "frontend/index.html"
+        "frontend/src/utils/customDomain.ts"
       ]
     },
     {
-      "description": "Added copy-to-clipboard behavior for an additional “HTML link” (static-html-example.html) beyond the two required URLs.",
-      "reason": "REQ-1 only asks to show and provide copy actions for (1) current deployment URL and (2) canonical public URL; the diff shows an additional exampleHtmlUrl and copy handler/toast not requested.",
+      "description": "Explicitly rejects http:// URLs with a specific error message requiring https://.",
+      "reason": "BuildRequest only stated the input accepts bare domains or HTTPS URLs; it did not request handling/rejecting http:// specifically.",
       "evidence": [
-        "frontend/src/pages/PublishingSharePage.tsx (truncated)"
+        "frontend/src/utils/customDomain.ts"
       ]
     }
   ],
-  "confidence": 0.68,
+  "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/index.html",
-    "frontend/public/sitemap.xml",
-    "frontend/scripts/generate-sitemap.mjs",
     "frontend/src/pages/PublishingSharePage.tsx",
-    "frontend/src/utils/publicUrl.ts",
+    "frontend/src/utils/customDomain.ts",
     "project_state.json"
   ]
 }

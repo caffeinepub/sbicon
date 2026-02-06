@@ -1,40 +1,18 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Deploying a live website and setting up a custom domain for it.",
+  "summary": "Website project being built/deployed with intent to connect a custom domain (domain not yet provided/owned).",
   "architectural_notes": [],
-  "known_issues": [],
+  "known_issues": [
+    "Custom domain cannot be connected until the user provides an exact domain name they own (not a Google URL)."
+  ],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-update-the-publishing-share-page-to-support-custom-domains-by-displaying-and-copying-a-configurable-canonical-public-url-read-the-canonical-url-from-import-meta-env-vite-public-url-if-vite-public-url-is-empty-undefined-fall-back-to-window-location-origin-show-both-1-the-current-deployed-url-window-location-origin-and-2-the-canonical-public-url-from-vite-public-url-fallback-logic-provide-copy-to-clipboard-buttons-for-each-url-ensure-all-user-facing-text-is-in-english",
-      "title": "Update the Publishing & Share page to support custom domains by displaying and copying a configurable canonical public URL.\n\n- Read the canonical URL from `import.meta.env.VITE_PUBLIC_URL`.\n- If `VITE_PUBLIC_URL` is empty/undefined, fall back to `window.location.origin`.\n- Show both:\n  1) the current deployed URL (`window.location.origin`) and\n  2) the canonical public URL (from `VITE_PUBLIC_URL` fallback logic)\n- Provide copy-to-clipboard buttons for each URL.\n- Ensure all user-facing text is in English.",
+      "id": "feature-add-a-guided-custom-domain-input-and-validation-flow-in-the-existing-publishing-share-page-so-users-can-enter-the-exact-domain-they-own-and-see-a-clean-canonical-url-to-use-for-vite-public-url-the-flow-must-provide-an-input-that-accepts-either-a-bare-domain-e-g-example-com-or-an-https-url-e-g-https-example-com-reject-and-show-an-english-error-message-for-urls-containing-a-path-querystring-or-fragment-e-g-https-example-com-page-x-1-well-known-third-party-domains-the-user-clearly-does-not-own-at-minimum-block-google-com-and-www-google-com-normalize-the-accepted-value-into-a-canonical-https-url-e-g-example-com-https-example-com-https-example-com-https-example-com-display-a-copy-to-clipboard-control-that-copies-an-env-snippet-line-in-the-exact-form-vite-public-url-https-example-com-persist-the-entered-domain-value-locally-e-g-localstorage-so-it-remains-visible-across-reloads-include-clear-english-guidance-stating-that-changing-the-domain-in-the-ui-does-not-automatically-connect-dns-the-user-must-configure-dns-at-their-registrar-and-then-rebuild-redeploy-with-vite-public-url-set",
+      "title": "Add a guided \"Custom Domain\" input and validation flow in the existing Publishing & Share page so users can enter the exact domain they own and see a clean, canonical URL to use for `VITE_PUBLIC_URL`.\n\nThe flow must:\n- Provide an input that accepts either a bare domain (e.g., `example.com`) or an HTTPS URL (e.g., `https://example.com`).\n- Reject and show an English error message for:\n  - URLs containing a path, querystring, or fragment (e.g., `https://example.com/page?x=1`).\n  - Well-known third-party domains the user clearly does not own (at minimum block `google.com` and `www.google.com`).\n- Normalize the accepted value into a canonical HTTPS URL (e.g., `example.com` -> `https://example.com`, `https://example.com/` -> `https://example.com`).\n- Display a copy-to-clipboard control that copies an `.env` snippet line in the exact form: `VITE_PUBLIC_URL=https://example.com`.\n- Persist the entered domain value locally (e.g., localStorage) so it remains visible across reloads.\n- Include clear English guidance stating that changing the domain in the UI does not automatically connect DNS; the user must configure DNS at their registrar and then rebuild/redeploy with `VITE_PUBLIC_URL` set.",
       "reqIds": [
         "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-make-sitemap-generation-use-the-configurable-public-base-url-so-frontend-public-sitemap-xml-contains-loc-entries-that-match-vite-public-url-when-configured-ensure-the-frontend-scripts-generate-sitemap-mjs-output-is-the-source-of-truth-update-the-repo-s-committed-frontend-public-sitemap-xml-to-match-the-current-vite-public-url-behavior-i-e-not-hardcoded-to-https-managing-emerald-pk9-draft-caffeine-xyz",
-      "title": "Make sitemap generation use the configurable public base URL so `frontend/public/sitemap.xml` contains `<loc>` entries that match `VITE_PUBLIC_URL` when configured.\n\n- Ensure the `frontend/scripts/generate-sitemap.mjs` output is the source of truth.\n- Update the repo’s committed `frontend/public/sitemap.xml` to match the current `VITE_PUBLIC_URL` behavior (i.e., not hardcoded to `https://managing-emerald-pk9-draft.caffeine.xyz`).",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-seo-metadata-uses-the-configurable-canonical-public-url-via-vite-public-url-keep-frontend-index-html-using-vite-public-url-for-og-url-json-ld-url-and-json-ld-potentialaction-target-preserve-the-existing-runtime-fallback-behavior-when-the-env-var-is-not-set",
-      "title": "Ensure SEO metadata uses the configurable canonical public URL via `VITE_PUBLIC_URL`.\n\n- Keep `frontend/index.html` using `%VITE_PUBLIC_URL%` for `og:url`, JSON-LD `url`, and JSON-LD `potentialAction.target`.\n- Preserve the existing runtime fallback behavior when the env var is not set.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-confirm-plain-english-custom-domain-guidance-for-end-users-explaining-that-domain-registration-and-dns-setup-must-be-performed-at-their-registrar-and-that-they-should-set-vite-public-url-and-redeploy-to-update-seo-and-sitemap",
-      "title": "Add/confirm plain-English “Custom Domain” guidance for end users explaining that domain registration and DNS setup must be performed at their registrar, and that they should set `VITE_PUBLIC_URL` and redeploy to update SEO and sitemap.",
-      "reqIds": [
-        "REQ-4"
       ],
       "version": 1
     }
@@ -42,12 +20,18 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Set up a custom domain for the live website (e.g., yourname.com)",
+      "summary": "Deploy/build the user's website",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Connect a custom domain to the deployed website (requires the exact domain the user owns)",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Enable custom domain setup guidance and configurable canonical URL for sharing + SEO",
+  "projectName": "Improve custom domain onboarding and website sharing flow",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

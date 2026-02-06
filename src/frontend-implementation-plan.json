@@ -1,77 +1,29 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Custom domain guidance + configurable canonical public URL for sharing, SEO, and sitemap",
+  "title": "Guided custom domain onboarding on Publishing & Share page",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "On the Publishing & Share page, display and allow copying both the current deployed URL and a configurable canonical public URL derived from VITE_PUBLIC_URL with a safe fallback.",
+      "summary": "Add a guided Custom Domain input with validation, canonicalization, copy-to-clipboard .env snippet, and local persistence on the Publishing & Share page.",
       "acceptanceCriteria": [
-        "On `/publishing`, the UI shows the current deployment URL based on `window.location.origin`.",
-        "On `/publishing`, the UI shows a canonical public URL derived from `import.meta.env.VITE_PUBLIC_URL` with a fallback to `window.location.origin` when unset.",
-        "Both URLs have working copy-to-clipboard actions with success/error toasts.",
-        "No user-facing text is introduced in a language other than English."
+        "On the Publishing & Share page, users can enter a domain/URL and see the normalized canonical URL output.",
+        "If the user enters a URL with a path/query/fragment, the UI shows an English validation error and does not accept the value.",
+        "If the user enters `google.com` or `www.google.com` (with or without `https://`), the UI blocks it with an English explanation that they must use a domain they own.",
+        "A \"Copy\" action copies the exact string `VITE_PUBLIC_URL=https://<domain>` corresponding to the normalized canonical URL.",
+        "The entered domain is restored after a page refresh.",
+        "No immutable frontend paths are modified."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/publicUrl.ts",
+          "path": "frontend/src/utils/customDomain.ts",
           "operation": "create",
-          "description": "Add a small helper to compute the canonical public URL from import.meta.env.VITE_PUBLIC_URL (trimmed, empty/undefined-safe) with fallback to window.location.origin."
+          "description": "Add a small utility to validate and normalize user-entered custom domain values: accept bare domains or HTTPS URLs, reject path/query/fragment, block well-known third-party domains (at minimum google.com and www.google.com), and return the canonical HTTPS URL string for display/copy."
         },
         {
           "path": "frontend/src/pages/PublishingSharePage.tsx",
           "operation": "modify",
-          "description": "Update the Publishing & Share UI to show (1) the current deployed URL (window.location.origin) and (2) the canonical public URL (via the new helper reading import.meta.env.VITE_PUBLIC_URL with fallback). Add separate copy-to-clipboard buttons and success/error toasts for each URL. Use existing shadcn/ui building blocks (Card, Button, Alert) for consistent layout and affordances; verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Make sitemap generation and the committed sitemap.xml use the configurable public base URL rather than a hardcoded caffeine.xyz URL.",
-      "acceptanceCriteria": [
-        "`frontend/public/sitemap.xml` no longer contains hardcoded `https://managing-emerald-pk9-draft.caffeine.xyz` and instead matches the base URL configured by `VITE_PUBLIC_URL` (or the intended default behavior when not set).",
-        "Running `frontend/scripts/generate-sitemap.mjs` produces a sitemap whose `<loc>` entries are prefixed by the configured public base URL."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/scripts/generate-sitemap.mjs",
-          "operation": "modify",
-          "description": "Update sitemap generation to use process.env.VITE_PUBLIC_URL when set, and otherwise use a clear non-hardcoded default behavior (e.g., localhost dev base). Ensure the script output remains the source of truth and that generated <loc> values are consistently prefixed by the chosen base URL."
-        },
-        {
-          "path": "frontend/public/sitemap.xml",
-          "operation": "modify",
-          "description": "Regenerate and commit sitemap.xml to reflect the updated generate-sitemap.mjs behavior (no hardcoded managing-emerald-pk9-draft.caffeine.xyz; <loc> entries match VITE_PUBLIC_URL when configured, otherwise the script’s default base URL behavior)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Ensure SEO metadata continues to use %VITE_PUBLIC_URL% and retains a runtime fallback to window.location.origin when unset/empty.",
-      "acceptanceCriteria": [
-        "`frontend/index.html` continues to populate `og:url`, JSON-LD `url`, and JSON-LD `potentialAction.target` from `%VITE_PUBLIC_URL%`.",
-        "When `VITE_PUBLIC_URL` is not provided at build time, the runtime fallback sets these values to `window.location.origin` without errors."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Keep og:url and JSON-LD values sourced from %VITE_PUBLIC_URL%, and harden the runtime fallback so it also handles the env var being replaced with an empty string (not just the literal placeholder), setting og:url, JSON-LD url, and JSON-LD potentialAction.target to window.location.origin without throwing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Add/confirm clear English custom domain guidance explaining registrar/DNS responsibilities and that updating VITE_PUBLIC_URL + redeploy is required for SEO/sitemap updates.",
-      "acceptanceCriteria": [
-        "The Publishing & Share page contains a clear checklist of steps for registering a domain, configuring DNS, waiting for propagation, and updating `VITE_PUBLIC_URL` + redeploying for SEO/sitemap updates.",
-        "The UI clearly states the system does not automatically purchase/register domains."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/PublishingSharePage.tsx",
-          "operation": "modify",
-          "description": "Review and refine the existing Custom Domain guidance copy to explicitly (a) state domain registration and DNS changes happen at the user’s registrar, (b) include a plain-English checklist (registrar purchase, DNS records, propagation wait), and (c) clearly instruct setting VITE_PUBLIC_URL and redeploying to update canonical sharing URL, SEO metadata, and sitemap. Use existing shadcn/ui components (Alert, Card) for the checklist and callouts; verify the component's usage instructions before implementing."
+          "description": "In the existing \"Custom Domain\" section, compose existing shadcn/ui components (do not modify anything under frontend/src/components/ui) to add: (1) an input that accepts bare domain or HTTPS URL, (2) inline English validation error messaging for invalid inputs, (3) a canonical HTTPS URL output, (4) a copy-to-clipboard control that copies exactly `VITE_PUBLIC_URL=https://example.com` based on the normalized value, (5) localStorage persistence + restore of the raw entered value across reloads, and (6) clear English guidance that changing the value here does not connect DNS and the user must configure DNS at their registrar and then rebuild/redeploy with VITE_PUBLIC_URL set. Verify the component's usage instructions before implementing."
         }
       ]
     }

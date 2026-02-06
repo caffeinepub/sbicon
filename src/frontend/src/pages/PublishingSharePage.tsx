@@ -1,19 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Copy, Check, Globe, Share2, Search, ExternalLink, FileCode, Link2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Copy, Check, Globe, Share2, Search, ExternalLink, FileCode, Link2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getPublicUrl, getCurrentDeploymentUrl } from '@/utils/publicUrl';
+import {
+  validateAndNormalizeDomain,
+  generateEnvSnippet,
+  saveCustomDomainInput,
+  loadCustomDomainInput,
+  clearCustomDomainInput,
+} from '@/utils/customDomain';
 
 export default function PublishingSharePage() {
   const [copiedDeployment, setCopiedDeployment] = useState(false);
   const [copiedCanonical, setCopiedCanonical] = useState(false);
   const [copiedHtml, setCopiedHtml] = useState(false);
+  const [copiedEnvSnippet, setCopiedEnvSnippet] = useState(false);
+  
+  const [customDomainInput, setCustomDomainInput] = useState('');
+  const [validationResult, setValidationResult] = useState<ReturnType<typeof validateAndNormalizeDomain> | null>(null);
   
   const currentDeploymentUrl = getCurrentDeploymentUrl();
   const canonicalPublicUrl = getPublicUrl();
   const exampleHtmlUrl = `${canonicalPublicUrl}/static-html-example.html`;
+
+  // Load saved custom domain input on mount
+  useEffect(() => {
+    const savedInput = loadCustomDomainInput();
+    if (savedInput) {
+      setCustomDomainInput(savedInput);
+      const result = validateAndNormalizeDomain(savedInput);
+      setValidationResult(result);
+    }
+  }, []);
 
   const handleCopyDeploymentUrl = async () => {
     try {
@@ -45,6 +68,39 @@ export default function PublishingSharePage() {
       setTimeout(() => setCopiedHtml(false), 2000);
     } catch (error) {
       toast.error('Failed to copy link');
+    }
+  };
+
+  const handleCustomDomainChange = (value: string) => {
+    setCustomDomainInput(value);
+    saveCustomDomainInput(value);
+    
+    if (value.trim() === '') {
+      setValidationResult(null);
+      return;
+    }
+    
+    const result = validateAndNormalizeDomain(value);
+    setValidationResult(result);
+  };
+
+  const handleClearCustomDomain = () => {
+    setCustomDomainInput('');
+    setValidationResult(null);
+    clearCustomDomainInput();
+  };
+
+  const handleCopyEnvSnippet = async () => {
+    if (!validationResult?.isValid || !validationResult.canonicalUrl) return;
+    
+    try {
+      const snippet = generateEnvSnippet(validationResult.canonicalUrl);
+      await navigator.clipboard.writeText(snippet);
+      setCopiedEnvSnippet(true);
+      toast.success('Environment variable copied to clipboard!');
+      setTimeout(() => setCopiedEnvSnippet(false), 2000);
+    } catch (error) {
+      toast.error('Failed to copy snippet');
     }
   };
 
@@ -171,16 +227,98 @@ export default function PublishingSharePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Link2 className="h-5 w-5 text-orange-500" />
-              Custom Domain
+              Custom Domain Setup
             </CardTitle>
             <CardDescription>
-              Use your own domain name for your marketplace
+              Configure your own domain name for your marketplace
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <p className="text-sm text-muted-foreground">
               You can connect a custom domain (like <code className="text-xs bg-muted px-1.5 py-0.5 rounded">yourdomain.com</code>) to your marketplace. This requires purchasing a domain from a domain registrar and configuring DNS settings.
             </p>
+
+            {/* Domain Input Section */}
+            <div className="space-y-3">
+              <Label htmlFor="custom-domain" className="text-sm font-medium">
+                Enter your custom domain
+              </Label>
+              <div className="flex items-start gap-2">
+                <div className="flex-1 space-y-2">
+                  <Input
+                    id="custom-domain"
+                    type="text"
+                    placeholder="example.com or https://example.com"
+                    value={customDomainInput}
+                    onChange={(e) => handleCustomDomainChange(e.target.value)}
+                    className={validationResult && !validationResult.isValid ? 'border-destructive' : ''}
+                  />
+                  {validationResult && !validationResult.isValid && (
+                    <p className="text-xs text-destructive">
+                      {validationResult.error}
+                    </p>
+                  )}
+                </div>
+                {customDomainInput && (
+                  <Button
+                    onClick={handleClearCustomDomain}
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Enter your domain with or without https:// (e.g., <code className="bg-muted px-1 py-0.5 rounded">example.com</code> or <code className="bg-muted px-1 py-0.5 rounded">https://example.com</code>)
+              </p>
+            </div>
+
+            {/* Canonical URL Output */}
+            {validationResult?.isValid && validationResult.canonicalUrl && (
+              <div className="space-y-3 bg-green-50 dark:bg-green-950/20 p-4 rounded-lg border border-green-200 dark:border-green-900">
+                <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                  <Check className="h-4 w-4" />
+                  <span className="text-sm font-medium">Valid domain</span>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">
+                    Canonical HTTPS URL:
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-background p-2 rounded border font-mono text-sm break-all">
+                      {validationResult.canonicalUrl}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">
+                    Environment variable to copy:
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-background p-2 rounded border font-mono text-xs break-all">
+                      {generateEnvSnippet(validationResult.canonicalUrl)}
+                    </div>
+                    <Button
+                      onClick={handleCopyEnvSnippet}
+                      variant="outline"
+                      size="icon"
+                      className="shrink-0 h-8 w-8"
+                    >
+                      {copiedEnvSnippet ? (
+                        <Check className="h-3 w-3 text-green-500" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Copy this line and add it to your <code className="bg-muted px-1 py-0.5 rounded">frontend/.env</code> file, then rebuild and redeploy.
+                  </p>
+                </div>
+              </div>
+            )}
             
             <div className="bg-muted/50 p-4 rounded-lg border space-y-3">
               <p className="text-sm font-medium mb-2">Step-by-step checklist:</p>
@@ -199,7 +337,7 @@ export default function PublishingSharePage() {
                   <strong className="text-foreground">Wait for DNS propagation</strong> (typically 15 minutes to 48 hours). You can check propagation status using online DNS checker tools.
                 </li>
                 <li>
-                  <strong className="text-foreground">Update your build configuration</strong> by setting the <code className="text-xs bg-background px-1.5 py-0.5 rounded">VITE_PUBLIC_URL</code> environment variable to your custom domain (e.g., <code className="text-xs bg-background px-1.5 py-0.5 rounded">https://yourdomain.com</code>)
+                  <strong className="text-foreground">Update your build configuration</strong> by setting the <code className="text-xs bg-background px-1.5 py-0.5 rounded">VITE_PUBLIC_URL</code> environment variable to your custom domain (use the tool above to generate the exact line to copy)
                 </li>
                 <li>
                   <strong className="text-foreground">Rebuild and redeploy</strong> your application. This updates the canonical public URL, SEO metadata (Open Graph tags, JSON-LD), and sitemap to use your custom domain.
