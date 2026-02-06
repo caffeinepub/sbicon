@@ -19,9 +19,9 @@ export default function SellCreateListingPage() {
 
   const handleSubmit = async (data: ListingInput) => {
     try {
-      await createMutation.mutateAsync(data);
+      const newListingId = await createMutation.mutateAsync(data);
       toast.success('Listing created successfully! 🎉');
-      navigate({ to: '/profile' });
+      navigate({ to: '/listing/$listingId', params: { listingId: newListingId } });
     } catch (error) {
       const errorMessage = parseCanisterError(error);
       toast.error(errorMessage);

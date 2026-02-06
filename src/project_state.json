@@ -1,177 +1,40 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Fidget Market is an Internet Computer (Motoko) + React marketplace app for kid-friendly fidget-toy listings. Users authenticate with Internet Identity, set up a user profile (display name), optionally create a seller profile, and create/edit/remove listings with images. The backend canister enforces role-based access control (admin/user/guest), stores user/seller profiles and listings, and includes a blob-storage maintenance mixin for storage gateway authorization, dead-blob cleanup, and cycles refills.",
+  "summary": "Deploying a live website and setting up a custom domain for it.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "IF-1",
-      "title": "Marketplace canister core domain (users, sellers, listings)",
-      "synonyms": [
-        "marketplace backend",
-        "Motoko marketplace canister"
-      ],
-      "description": "Motoko canister defines and stores UserProfile, SellerProfile, and Listing records, with in-memory Maps for profiles and listings and basic marketplace query endpoints.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-2",
-      "title": "Role-based access control with admin bootstrap secret",
-      "synonyms": [
-        "RBAC",
-        "access-control",
-        "admin token initialization"
-      ],
-      "description": "Implements admin/user/guest roles; first initialization assigns admin if the caller supplies a secret matching an environment variable, otherwise assigns user; supports admin-only role assignment and role checks for protected methods.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-3",
-      "title": "Frontend Internet Identity authentication",
-      "synonyms": [
-        "Internet Identity login",
-        "II auth"
-      ],
-      "description": "Provides a React context for Internet Identity using @dfinity/auth-client, including persisted delegation handling, login/logout, and a LoginButton with state handling.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-4",
-      "title": "Backend actor creation and access-control initialization",
-      "synonyms": [
-        "useActor",
-        "authenticated actor"
-      ],
-      "description": "Creates anonymous or authenticated canister actors based on identity; for authenticated users, calls _initializeAccessControlWithSecret using a secret read from URL hash/session and refreshes React Query caches when the actor changes.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-5",
-      "title": "User profile management (save and fetch)",
-      "synonyms": [
-        "display name profile",
-        "user profile CRUD"
-      ],
-      "description": "Allows authenticated users to save their own profile (displayName) and fetch it; backend enforces user-only access and restricts viewing other users’ profiles to self or admin.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-6",
-      "title": "Seller profiles and seller directory",
-      "synonyms": [
-        "seller onboarding",
-        "seller profile lookup"
-      ],
-      "description": "Backend supports checking seller status, creating a seller profile, listing all sellers, and fetching a seller profile by principal; frontend includes query/mutation hooks and a SellerDisplayName component.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-7",
-      "title": "Auto-create seller profile during listing creation",
-      "synonyms": [
-        "ensureSellerProfile",
-        "implicit seller creation"
-      ],
-      "description": "Backend createListing ensures the caller has a SellerProfile, auto-creating one using the user profile display name (or a default principal-based name) if missing.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-8",
-      "title": "Listing CRUD with ownership checks",
-      "synonyms": [
-        "create/update/delete listing",
-        "seller listing management"
-      ],
-      "description": "Authenticated users can create listings; sellers can update and deactivate their own listings; backend enforces ownership; listings are available via getListing and getListingsBySeller.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-9",
-      "title": "Marketplace browsing UI and routing",
-      "synonyms": [
-        "home feed",
-        "listing detail pages"
-      ],
-      "description": "React SPA routes include home browse page, listing detail page with image carousel, profile page, and seller create/edit listing pages; navigation uses TanStack Router.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-10",
-      "title": "Listing form with presets, validation, and images",
-      "synonyms": [
-        "sell form",
-        "listing templates"
-      ],
-      "description": "Reusable ListingForm supports create/edit, optional preset auto-fill, field validation, price conversion to cents (BigInt), and up to 3 images via ImageUploader with previews/removal.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-11",
-      "title": "Client-side search and category filtering",
-      "synonyms": [
-        "listing filter",
-        "search UI"
-      ],
-      "description": "Home page filters aggregated listings by search term and a simple category button group (Pop-it/Spinner/Squishy/Cube/Other) using title-based matching.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-12",
-      "title": "Actionable error handling for canister calls",
-      "synonyms": [
-        "canister error parsing",
-        "user-friendly toasts"
-      ],
-      "description": "Frontend includes parseCanisterError to extract trap/reject messages and map common backend errors to friendly text; used in listing creation and profile setup flows with toast notifications.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-13",
-      "title": "Blob-storage maintenance endpoints and authorization registry",
-      "synonyms": [
-        "storage gateway authorization",
-        "dead blob pruning",
-        "cycles refill"
-      ],
-      "description": "Includes a blob-storage mixin providing endpoints to update authorized gateway principals from a cashier canister, list/prune dead blobs with authorization checks, and refill the cashier with available cycles.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-14",
-      "title": "UI theming and reusable layout states",
-      "synonyms": [
-        "AppLayout",
-        "tailwind/shadcn UI"
-      ],
-      "description": "AppLayout provides consistent header/nav/footer and background styling; shared LoadingState and EmptyState components handle common UX states; ThemeProvider enables light/dark mode.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-small-in-app-publishing-share-section-that-clearly-explains-the-app-is-published-as-a-web-app-on-the-internet-computer-not-google-hosting-and-provides-the-current-public-site-url-based-on-window-location-origin-with-a-one-click-copy-to-clipboard-action",
-      "title": "Add a small in-app “Publishing / Share” section that clearly explains the app is published as a web app on the Internet Computer (not Google hosting), and provides the current public site URL (based on window.location.origin) with a one-click copy-to-clipboard action.",
+      "id": "feature-update-the-publishing-share-page-to-support-custom-domains-by-displaying-and-copying-a-configurable-canonical-public-url-read-the-canonical-url-from-import-meta-env-vite-public-url-if-vite-public-url-is-empty-undefined-fall-back-to-window-location-origin-show-both-1-the-current-deployed-url-window-location-origin-and-2-the-canonical-public-url-from-vite-public-url-fallback-logic-provide-copy-to-clipboard-buttons-for-each-url-ensure-all-user-facing-text-is-in-english",
+      "title": "Update the Publishing & Share page to support custom domains by displaying and copying a configurable canonical public URL.\n\n- Read the canonical URL from `import.meta.env.VITE_PUBLIC_URL`.\n- If `VITE_PUBLIC_URL` is empty/undefined, fall back to `window.location.origin`.\n- Show both:\n  1) the current deployed URL (`window.location.origin`) and\n  2) the canonical public URL (from `VITE_PUBLIC_URL` fallback logic)\n- Provide copy-to-clipboard buttons for each URL.\n- Ensure all user-facing text is in English.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-any-user-facing-text-added-for-publishing-uses-clear-english-phrasing-and-avoids-implying-google-cloud-google-play-deployment-is-available",
-      "title": "Ensure any user-facing text added for publishing uses clear English phrasing and avoids implying Google Cloud / Google Play deployment is available.",
+      "id": "feature-make-sitemap-generation-use-the-configurable-public-base-url-so-frontend-public-sitemap-xml-contains-loc-entries-that-match-vite-public-url-when-configured-ensure-the-frontend-scripts-generate-sitemap-mjs-output-is-the-source-of-truth-update-the-repo-s-committed-frontend-public-sitemap-xml-to-match-the-current-vite-public-url-behavior-i-e-not-hardcoded-to-https-managing-emerald-pk9-draft-caffeine-xyz",
+      "title": "Make sitemap generation use the configurable public base URL so `frontend/public/sitemap.xml` contains `<loc>` entries that match `VITE_PUBLIC_URL` when configured.\n\n- Ensure the `frontend/scripts/generate-sitemap.mjs` output is the source of truth.\n- Update the repo’s committed `frontend/public/sitemap.xml` to match the current `VITE_PUBLIC_URL` behavior (i.e., not hardcoded to `https://managing-emerald-pk9-draft.caffeine.xyz`).",
       "reqIds": [
         "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-seo-metadata-uses-the-configurable-canonical-public-url-via-vite-public-url-keep-frontend-index-html-using-vite-public-url-for-og-url-json-ld-url-and-json-ld-potentialaction-target-preserve-the-existing-runtime-fallback-behavior-when-the-env-var-is-not-set",
+      "title": "Ensure SEO metadata uses the configurable canonical public URL via `VITE_PUBLIC_URL`.\n\n- Keep `frontend/index.html` using `%VITE_PUBLIC_URL%` for `og:url`, JSON-LD `url`, and JSON-LD `potentialAction.target`.\n- Preserve the existing runtime fallback behavior when the env var is not set.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-confirm-plain-english-custom-domain-guidance-for-end-users-explaining-that-domain-registration-and-dns-setup-must-be-performed-at-their-registrar-and-that-they-should-set-vite-public-url-and-redeploy-to-update-seo-and-sitemap",
+      "title": "Add/confirm plain-English “Custom Domain” guidance for end users explaining that domain registration and DNS setup must be performed at their registrar, and that they should set `VITE_PUBLIC_URL` and redeploy to update SEO and sitemap.",
+      "reqIds": [
+        "REQ-4"
       ],
       "version": 1
     }
@@ -179,36 +42,12 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Support publishing/deploying the Fidget Market web app to a Google-hosted destination (e.g., Google Cloud hosting) in addition to Internet Computer deployment.",
+      "summary": "Set up a custom domain for the live website (e.g., yourname.com)",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "architectural_notes": [
-    "Internet Computer architecture: a Motoko marketplace canister (backend/main.mo) with a React SPA frontend.",
-    "Motoko canister composition via mixins: authorization (MixinAuthorization) and blob-storage maintenance endpoints (blob-storage/Mixin).",
-    "Role-based access control module (access-control.mo) with first-time initialization that assigns roles and supports admin role assignment.",
-    "Frontend uses TanStack Router for routing and @tanstack/react-query for caching, mutations, and query invalidation.",
-    "Custom actor lifecycle hook (useActor) recreates an authenticated/anonymous backend actor based on Internet Identity state and forces dependent query refetches when the actor changes.",
-    "Internet Identity integration via @dfinity/auth-client with a React context provider (useInternetIdentity) and explicit login/logout UI.",
-    "Sensitive “admin token” handling via hash-fragment secrets persisted to sessionStorage and removed from URL (utils/urlParams.ts).",
-    "Listings browsing is done by fetching all sellers and aggregating their embedded listing arrays client-side (useGetAllListings).",
-    "UI is built with TailwindCSS + shadcn/ui primitives, common loading/empty-state components, and theme support (next-themes).",
-    "Blob-storage maintenance uses IC prim storage APIs (e.g., getDeadBlobs/pruneConfirmedDeadBlobs) and an authorization registry refreshed from a “cashier” canister."
-  ],
-  "known_issues": [
-    "Listing images are stored/handled as data URLs in frontend and persisted directly as Text arrays in listing records; this can bloat canister state and may hit message/state size limits. The included blob-storage canister/mixin is not actually used by the ImageUploader/listing flow.",
-    "Access-control initialization depends on the CAFFEINE_ADMIN_TOKEN environment variable; if missing, authenticated actor initialization (_initializeAccessControlWithSecret) will trap and can break the app for logged-in users.",
-    "Storage cashier principal env var name appears misspelled as CAFFFEINE_STORAGE_CASHIER_PRINCIPAL (extra 'F'), which can cause runtime traps if deployments use the expected spelling.",
-    "AccessControl.getUserRole traps with \"User is not registered\" until initialization runs; any call path that bypasses frontend’s initialization step can fail unexpectedly.",
-    "Profile setup flow always attempts createSellerProfile after saving user profile; if a seller profile was auto-created earlier (e.g., via createListing), createSellerProfile traps (“already exists”) and the UI may not close the setup dialog even though the user profile save succeeded.",
-    "Listing IDs are generated as \"<title> #<increment>\"; IDs are not sanitized/URL-friendly and may be unstable/awkward for long titles or repeated titles.",
-    "Two sources of truth for listings exist (global listings map and sellerProfiles[].listings); frontend “all listings” view relies on sellerProfiles listings, so any divergence could lead to inconsistent results.",
-    "No server-side pagination/search/filtering; home page potentially loads all sellers and all listings on every refresh, which may not scale well."
-  ],
-  "isFixRequest": false,
-  "gameProjectType": "none",
-  "projectName": "Fidget Market",
+  "projectName": "Enable custom domain setup guidance and configurable canonical URL for sharing + SEO",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

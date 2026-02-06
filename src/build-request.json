@@ -1,57 +1,88 @@
 {
   "kind": "build_request",
-  "title": "Add in-app publishing guidance and shareable public URL (ICP-only)",
+  "title": "Enable custom domain setup guidance and configurable canonical URL for sharing + SEO",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a small in-app “Publishing / Share” section that clearly explains the app is published as a web app on the Internet Computer (not Google hosting), and provides the current public site URL (based on window.location.origin) with a one-click copy-to-clipboard action.",
+      "text": "Update the Publishing & Share page to support custom domains by displaying and copying a configurable canonical public URL.\n\n- Read the canonical URL from `import.meta.env.VITE_PUBLIC_URL`.\n- If `VITE_PUBLIC_URL` is empty/undefined, fall back to `window.location.origin`.\n- Show both:\n  1) the current deployed URL (`window.location.origin`) and\n  2) the canonical public URL (from `VITE_PUBLIC_URL` fallback logic)\n- Provide copy-to-clipboard buttons for each URL.\n- Ensure all user-facing text is in English.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "ok can  u publish it",
-          "to google"
+          "ok do that"
         ]
       },
       "acceptanceCriteria": [
-        "A user can find a “Publishing / Share” section from the main UI (e.g., footer link, header menu item, or a simple settings/about page).",
-        "The section contains English text stating that publishing/deployment is to the Internet Computer and that Google hosting is not supported in this project.",
-        "The section displays the current public URL (window.location.origin) and includes a “Copy link” button.",
-        "Clicking “Copy link” copies the URL to the clipboard and shows a success toast (or equivalent non-intrusive confirmation)."
+        "On `/publishing`, the UI shows the current deployment URL based on `window.location.origin`.",
+        "On `/publishing`, the UI shows a canonical public URL derived from `import.meta.env.VITE_PUBLIC_URL` with a fallback to `window.location.origin` when unset.",
+        "Both URLs have working copy-to-clipboard actions with success/error toasts.",
+        "No user-facing text is introduced in a language other than English."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Ensure any user-facing text added for publishing uses clear English phrasing and avoids implying Google Cloud / Google Play deployment is available.",
+      "text": "Make sitemap generation use the configurable public base URL so `frontend/public/sitemap.xml` contains `<loc>` entries that match `VITE_PUBLIC_URL` when configured.\n\n- Ensure the `frontend/scripts/generate-sitemap.mjs` output is the source of truth.\n- Update the repo’s committed `frontend/public/sitemap.xml` to match the current `VITE_PUBLIC_URL` behavior (i.e., not hardcoded to `https://managing-emerald-pk9-draft.caffeine.xyz`).",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "Use English for any user-facing text in the build request.",
-          "to google"
+          "ok do that"
         ]
       },
       "acceptanceCriteria": [
-        "No new UI copy suggests the app can be deployed to Google Cloud / Google Play.",
-        "All newly added user-facing strings are in English."
+        "`frontend/public/sitemap.xml` no longer contains hardcoded `https://managing-emerald-pk9-draft.caffeine.xyz` and instead matches the base URL configured by `VITE_PUBLIC_URL` (or the intended default behavior when not set).",
+        "Running `frontend/scripts/generate-sitemap.mjs` produces a sitemap whose `<loc>` entries are prefixed by the configured public base URL."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Ensure SEO metadata uses the configurable canonical public URL via `VITE_PUBLIC_URL`.\n\n- Keep `frontend/index.html` using `%VITE_PUBLIC_URL%` for `og:url`, JSON-LD `url`, and JSON-LD `potentialAction.target`.\n- Preserve the existing runtime fallback behavior when the env var is not set.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "ok do that"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`frontend/index.html` continues to populate `og:url`, JSON-LD `url`, and JSON-LD `potentialAction.target` from `%VITE_PUBLIC_URL%`.",
+        "When `VITE_PUBLIC_URL` is not provided at build time, the runtime fallback sets these values to `window.location.origin` without errors."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add/confirm plain-English “Custom Domain” guidance for end users explaining that domain registration and DNS setup must be performed at their registrar, and that they should set `VITE_PUBLIC_URL` and redeploy to update SEO and sitemap.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "ok do that"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The Publishing & Share page contains a clear checklist of steps for registering a domain, configuring DNS, waiting for propagation, and updating `VITE_PUBLIC_URL` + redeploying for SEO/sitemap updates.",
+        "The UI clearly states the system does not automatically purchase/register domains."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/components/ui (read-only UI components must be composed, not edited).",
-    "Do not modify immutable frontend hook files (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
-    "Backend remains a single Motoko actor in backend/main.mo; no multi-service architecture.",
-    "Do not implement Google hosting / Google Cloud deployment (unsupported by platform constraints)."
+    "Frontend immutable paths must not be edited: `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, `frontend/src/components/ui`.",
+    "Keep all user-facing text in English.",
+    "Do not introduce third-party authentication providers; only Internet Identity is supported."
   ],
   "nonGoals": [
-    "Building or deploying to Google Cloud, Firebase Hosting, Google Play Store, or any non-ICP hosting target",
-    "Adding third-party authentication providers (only Internet Identity)",
-    "Adding CI/CD pipelines or external deployment automation"
+    "Purchasing a domain on the user’s behalf.",
+    "Automatically configuring DNS records at a registrar.",
+    "Guaranteeing Google indexing or search ranking outcomes."
   ],
   "imageRequirements": {
     "required": [],

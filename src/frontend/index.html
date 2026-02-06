@@ -1,8 +1,69 @@
+<!DOCTYPE html>
 <html lang='en'>
     <head>
         <meta charset='UTF-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-        <title>Fidget Toy Resale Marketplace App (Kid-Friendly)</title>
+        <title>SBIGLIDE - Fidget Toy Resale Marketplace</title>
+        <meta name='description' content='SBIGLIDE is your trusted fidget toy resale marketplace. Buy and sell fidget toys including pop-its, spinners, squishies, and cubes in a kid-friendly environment.' />
+        
+        <!-- Google Search Console Verification -->
+        <meta name='google-site-verification' content='%VITE_GOOGLE_SITE_VERIFICATION%' />
+        
+        <!-- Open Graph Meta Tags -->
+        <meta property='og:title' content='SBIGLIDE - Fidget Toy Resale Marketplace' />
+        <meta property='og:description' content='SBIGLIDE is your trusted fidget toy resale marketplace. Buy and sell fidget toys including pop-its, spinners, squishies, and cubes in a kid-friendly environment.' />
+        <meta property='og:type' content='website' />
+        <meta property='og:url' content='%VITE_PUBLIC_URL%' />
+        
+        <!-- JSON-LD Structured Data -->
+        <script type='application/ld+json'>
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "SBIGLIDE",
+          "alternateName": "SBIGLIDE Fidget Market",
+          "url": "%VITE_PUBLIC_URL%",
+          "description": "A kid-friendly fidget toy resale marketplace where users can buy and sell fidget toys including pop-its, spinners, squishies, and cubes.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "%VITE_PUBLIC_URL%/?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+        </script>
+        
+        <!-- Runtime fallback for SEO URLs when env var is not set or empty -->
+        <script>
+          (function() {
+            var ogUrlMeta = document.querySelector('meta[property="og:url"]');
+            var ogUrlContent = ogUrlMeta ? ogUrlMeta.content : '';
+            
+            // Check if placeholder wasn't replaced or is empty
+            if (!ogUrlContent || ogUrlContent === '%VITE_PUBLIC_URL%' || ogUrlContent.trim() === '') {
+              var origin = window.location.origin;
+              
+              // Update og:url
+              if (ogUrlMeta) {
+                ogUrlMeta.content = origin;
+              }
+              
+              // Update JSON-LD script
+              var jsonLdScript = document.querySelector('script[type="application/ld+json"]');
+              if (jsonLdScript) {
+                try {
+                  var data = JSON.parse(jsonLdScript.textContent);
+                  data.url = origin;
+                  if (data.potentialAction && data.potentialAction.target) {
+                    data.potentialAction.target = origin + '/?search={search_term_string}';
+                  }
+                  jsonLdScript.textContent = JSON.stringify(data, null, 2);
+                } catch (e) {
+                  console.error('Failed to update JSON-LD:', e);
+                }
+              }
+            }
+          })();
+        </script>
     </head>
     <body>
         <div id='root'></div>

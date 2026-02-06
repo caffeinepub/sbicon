@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add an in-app “Publishing / Share” section that explains the app is published on the Internet Computer and lets users copy the current public site URL.
+**Goal:** Support custom domain setups by showing a configurable canonical public URL for sharing/SEO, and ensure sitemap + SEO metadata align with that canonical URL.
 
 **Planned changes:**
-- Add a discoverable “Publishing / Share” entry point in the main UI (e.g., footer/header link or simple settings/about page).
-- Create a “Publishing / Share” section with clear English text stating deployment is to the Internet Computer and that Google hosting is not supported.
-- Display the current public URL using `window.location.origin` and add a “Copy link” button.
-- On copy, write the URL to the clipboard and show a non-intrusive success confirmation (toast or equivalent).
+- Update the Publishing & Share page (`/publishing`) to display both the current deployed URL (`window.location.origin`) and a canonical public URL derived from `import.meta.env.VITE_PUBLIC_URL` (fallback to `window.location.origin`), each with copy-to-clipboard + success/error toasts.
+- Add/confirm plain-English “Custom Domain” guidance on the Publishing & Share page, including a checklist covering domain registration, DNS setup, propagation wait time, and setting `VITE_PUBLIC_URL` + redeploying; clarify the app does not buy/register domains.
+- Update sitemap generation to use the configurable public base URL, ensuring `frontend/scripts/generate-sitemap.mjs` is the source of truth and the committed `frontend/public/sitemap.xml` is no longer hardcoded to the previous draft URL.
+- Ensure SEO metadata continues to use `%VITE_PUBLIC_URL%` in `frontend/index.html` for `og:url` and JSON-LD fields, with runtime fallback to `window.location.origin` when the env var is not set.
 
-**User-visible outcome:** Users can open a “Publishing / Share” section, read where the app is hosted (Internet Computer), see the current public URL, and copy it with one click with a brief success message.
+**User-visible outcome:** On `/publishing`, users can copy both the current deployment URL and the canonical public URL, and they see clear steps for setting up a custom domain and updating `VITE_PUBLIC_URL` + redeploying so SEO metadata and the sitemap use the correct public URL.

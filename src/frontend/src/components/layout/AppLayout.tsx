@@ -20,7 +20,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <ShoppingBag className="h-6 w-6 text-orange-500" />
-            <span className="font-bold text-xl">Fidget Market</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-xl leading-tight">SBIGLIDE</span>
+              <span className="text-xs text-muted-foreground leading-tight">Fidget Market</span>
+            </div>
           </Link>
 
           <nav className="flex items-center gap-4">
@@ -47,6 +50,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Footer */}
       <footer className="border-t mt-16 py-8 bg-muted/30">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          <p className="mb-2">
+            <strong className="text-foreground">SBIGLIDE</strong> - Your trusted fidget toy marketplace
+          </p>
           <p>
             © 2026. Built with ❤️ using{' '}
             <a

@@ -139,7 +139,7 @@ export interface backendInterface {
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createListing(input: ListingInput): Promise<void>;
+    createListing(input: ListingInput): Promise<ProductID>;
     createSellerProfile(displayName: string): Promise<void>;
     deactivateListing(id: ProductID): Promise<void>;
     getAllSellers(): Promise<Array<SellerProfile>>;
@@ -270,7 +270,7 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createListing(arg0: ListingInput): Promise<void> {
+    async createListing(arg0: ListingInput): Promise<ProductID> {
         if (this.processError) {
             try {
                 const result = await this.actor.createListing(arg0);

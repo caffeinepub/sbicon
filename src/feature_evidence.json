@@ -2,12 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-small-in-app-publishing-share-section-that-clearly-explains-the-app-is-published-as-a-web-app-on-the-internet-computer-not-google-hosting-and-provides-the-current-public-site-url-based-on-window-location-origin-with-a-one-click-copy-to-clipboard-action",
-      "featureTitle": "Add a small in-app “Publishing / Share” section that clearly explains the app is published as a web app on the Internet Computer (not Google hosting), and provides the current public site URL (based on window.location.origin) with a one-click copy-to-clipboard action.",
+      "featureId": "feature-update-the-publishing-share-page-to-support-custom-domains-by-displaying-and-copying-a-configurable-canonical-public-url-read-the-canonical-url-from-import-meta-env-vite-public-url-if-vite-public-url-is-empty-undefined-fall-back-to-window-location-origin-show-both-1-the-current-deployed-url-window-location-origin-and-2-the-canonical-public-url-from-vite-public-url-fallback-logic-provide-copy-to-clipboard-buttons-for-each-url-ensure-all-user-facing-text-is-in-english",
+      "featureTitle": "Update the Publishing & Share page to support custom domains by displaying and copying a configurable canonical public URL.\n\n- Read the canonical URL from `import.meta.env.VITE_PUBLIC_URL`.\n- If `VITE_PUBLIC_URL` is empty/undefined, fall back to `window.location.origin`.\n- Show both:\n  1) the current deployed URL (`window.location.origin`) and\n  2) the canonical public URL (from `VITE_PUBLIC_URL` fallback logic)\n- Provide copy-to-clipboard buttons for each URL.\n- Ensure all user-facing text is in English.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/pages/PublishingSharePage.tsx"
+        "frontend/src/pages/PublishingSharePage.tsx",
+        "frontend/src/utils/publicUrl.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -24,11 +23,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-any-user-facing-text-added-for-publishing-uses-clear-english-phrasing-and-avoids-implying-google-cloud-google-play-deployment-is-available",
-      "featureTitle": "Ensure any user-facing text added for publishing uses clear English phrasing and avoids implying Google Cloud / Google Play deployment is available.",
+      "featureId": "feature-make-sitemap-generation-use-the-configurable-public-base-url-so-frontend-public-sitemap-xml-contains-loc-entries-that-match-vite-public-url-when-configured-ensure-the-frontend-scripts-generate-sitemap-mjs-output-is-the-source-of-truth-update-the-repo-s-committed-frontend-public-sitemap-xml-to-match-the-current-vite-public-url-behavior-i-e-not-hardcoded-to-https-managing-emerald-pk9-draft-caffeine-xyz",
+      "featureTitle": "Make sitemap generation use the configurable public base URL so `frontend/public/sitemap.xml` contains `<loc>` entries that match `VITE_PUBLIC_URL` when configured.\n\n- Ensure the `frontend/scripts/generate-sitemap.mjs` output is the source of truth.\n- Update the repo’s committed `frontend/public/sitemap.xml` to match the current `VITE_PUBLIC_URL` behavior (i.e., not hardcoded to `https://managing-emerald-pk9-draft.caffeine.xyz`).",
       "files": [
-        "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/pages/PublishingSharePage.tsx"
+        "frontend/public/sitemap.xml",
+        "frontend/scripts/generate-sitemap.mjs"
       ],
       "components": [
         "authorization@4.0.0",
@@ -41,6 +40,46 @@
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-seo-metadata-uses-the-configurable-canonical-public-url-via-vite-public-url-keep-frontend-index-html-using-vite-public-url-for-og-url-json-ld-url-and-json-ld-potentialaction-target-preserve-the-existing-runtime-fallback-behavior-when-the-env-var-is-not-set",
+      "featureTitle": "Ensure SEO metadata uses the configurable canonical public URL via `VITE_PUBLIC_URL`.\n\n- Keep `frontend/index.html` using `%VITE_PUBLIC_URL%` for `og:url`, JSON-LD `url`, and JSON-LD `potentialAction.target`.\n- Preserve the existing runtime fallback behavior when the env var is not set.",
+      "files": [
+        "frontend/index.html"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-confirm-plain-english-custom-domain-guidance-for-end-users-explaining-that-domain-registration-and-dns-setup-must-be-performed-at-their-registrar-and-that-they-should-set-vite-public-url-and-redeploy-to-update-seo-and-sitemap",
+      "featureTitle": "Add/confirm plain-English “Custom Domain” guidance for end users explaining that domain registration and DNS setup must be performed at their registrar, and that they should set `VITE_PUBLIC_URL` and redeploy to update SEO and sitemap.",
+      "files": [
+        "frontend/src/pages/PublishingSharePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }

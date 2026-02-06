@@ -39,7 +39,7 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createListing(input: ListingInput): Promise<void>;
+    createListing(input: ListingInput): Promise<ProductID>;
     createSellerProfile(displayName: string): Promise<void>;
     deactivateListing(id: ProductID): Promise<void>;
     getAllSellers(): Promise<Array<SellerProfile>>;

@@ -2,7 +2,6 @@ import Map "mo:core/Map";
 import List "mo:core/List";
 import Text "mo:core/Text";
 import Nat "mo:core/Nat";
-import Time "mo:core/Time";
 import Order "mo:core/Order";
 import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
@@ -11,6 +10,7 @@ import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 
+import Char "mo:core/Char";
 
 
 actor {
@@ -140,7 +140,14 @@ actor {
   // Listing management functions
   func formatListingID(title : Text) : Text {
     lastListingId += 1;
-    title.concat(" #").concat(lastListingId.toText());
+    let normalizedTitle = Text.fromIter(
+      title.chars().map(
+        func(c) {
+          if (c == ' ') { '-' } else { c };
+        }
+      )
+    );
+    normalizedTitle.concat("-").concat(lastListingId.toText());
   };
 
   // Helper function to ensure seller profile exists
@@ -166,7 +173,7 @@ actor {
     };
   };
 
-  public shared ({ caller }) func createListing(input : ListingInput) : async () {
+  public shared ({ caller }) func createListing(input : ListingInput) : async ProductID {
     // Authentication check: only authenticated users can create listings
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can create listings");
@@ -200,6 +207,8 @@ actor {
 
     // Store updated seller profile
     sellerProfiles.add(caller, updatedSeller);
+
+    newListing.id;
   };
 
   public shared ({ caller }) func updateListing(id : ProductID, input : ListingInput) : async () {

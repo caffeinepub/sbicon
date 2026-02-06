@@ -65,7 +65,7 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'createListing' : ActorMethod<[ListingInput], undefined>,
+  'createListing' : ActorMethod<[ListingInput], ProductID>,
   'createSellerProfile' : ActorMethod<[string], undefined>,
   'deactivateListing' : ActorMethod<[ProductID], undefined>,
   'getAllSellers' : ActorMethod<[], Array<SellerProfile>>,

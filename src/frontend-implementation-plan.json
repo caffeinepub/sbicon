@@ -1,52 +1,77 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "In-app Publishing/Share section with copyable public URL (ICP-only)",
+  "title": "Custom domain guidance + configurable canonical public URL for sharing, SEO, and sitemap",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add a main-UI-accessible “Publishing / Share” section explaining ICP hosting and showing a copy-to-clipboard public URL with confirmation.",
+      "summary": "On the Publishing & Share page, display and allow copying both the current deployed URL and a configurable canonical public URL derived from VITE_PUBLIC_URL with a safe fallback.",
       "acceptanceCriteria": [
-        "A user can find a “Publishing / Share” section from the main UI (e.g., footer link, header menu item, or a simple settings/about page).",
-        "The section contains English text stating that publishing/deployment is to the Internet Computer and that Google hosting is not supported in this project.",
-        "The section displays the current public URL (window.location.origin) and includes a “Copy link” button.",
-        "Clicking “Copy link” copies the URL to the clipboard and shows a success toast (or equivalent non-intrusive confirmation)."
+        "On `/publishing`, the UI shows the current deployment URL based on `window.location.origin`.",
+        "On `/publishing`, the UI shows a canonical public URL derived from `import.meta.env.VITE_PUBLIC_URL` with a fallback to `window.location.origin` when unset.",
+        "Both URLs have working copy-to-clipboard actions with success/error toasts.",
+        "No user-facing text is introduced in a language other than English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/PublishingSharePage.tsx",
+          "path": "frontend/src/utils/publicUrl.ts",
           "operation": "create",
-          "description": "Create a dedicated “Publishing / Share” page that: (1) explains the app is published as a web app on the Internet Computer (ICP) and that Google hosting is not supported, (2) reads and displays the current public URL using window.location.origin, and (3) provides a one-click “Copy link” action using the browser clipboard API with a success confirmation using the existing toast system (sonner). Use shadcn/ui components (e.g., Card, Button) for layout and actions; verify the component's usage instructions before implementing."
+          "description": "Add a small helper to compute the canonical public URL from import.meta.env.VITE_PUBLIC_URL (trimmed, empty/undefined-safe) with fallback to window.location.origin."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/PublishingSharePage.tsx",
           "operation": "modify",
-          "description": "Register and wire a new route (e.g., /publishing) to PublishingSharePage so it is navigable within the app. Ensure the route is added to the route tree. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
-          "operation": "modify",
-          "description": "Add a visible link in the main UI (footer is preferred to keep nav minimal) labeled “Publishing / Share” that navigates to the new PublishingSharePage route. Keep it consistent with existing TanStack Router Link usage. Verify the component's usage instructions before implementing."
+          "description": "Update the Publishing & Share UI to show (1) the current deployed URL (window.location.origin) and (2) the canonical public URL (via the new helper reading import.meta.env.VITE_PUBLIC_URL with fallback). Add separate copy-to-clipboard buttons and success/error toasts for each URL. Use existing shadcn/ui building blocks (Card, Button, Alert) for consistent layout and affordances; verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Ensure newly added publishing-related UI copy is clear English and explicitly avoids implying Google deployment options exist.",
+      "summary": "Make sitemap generation and the committed sitemap.xml use the configurable public base URL rather than a hardcoded caffeine.xyz URL.",
       "acceptanceCriteria": [
-        "No new UI copy suggests the app can be deployed to Google Cloud / Google Play.",
-        "All newly added user-facing strings are in English."
+        "`frontend/public/sitemap.xml` no longer contains hardcoded `https://managing-emerald-pk9-draft.caffeine.xyz` and instead matches the base URL configured by `VITE_PUBLIC_URL` (or the intended default behavior when not set).",
+        "Running `frontend/scripts/generate-sitemap.mjs` produces a sitemap whose `<loc>` entries are prefixed by the configured public base URL."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/scripts/generate-sitemap.mjs",
+          "operation": "modify",
+          "description": "Update sitemap generation to use process.env.VITE_PUBLIC_URL when set, and otherwise use a clear non-hardcoded default behavior (e.g., localhost dev base). Ensure the script output remains the source of truth and that generated <loc> values are consistently prefixed by the chosen base URL."
+        },
+        {
+          "path": "frontend/public/sitemap.xml",
+          "operation": "modify",
+          "description": "Regenerate and commit sitemap.xml to reflect the updated generate-sitemap.mjs behavior (no hardcoded managing-emerald-pk9-draft.caffeine.xyz; <loc> entries match VITE_PUBLIC_URL when configured, otherwise the script’s default base URL behavior)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Ensure SEO metadata continues to use %VITE_PUBLIC_URL% and retains a runtime fallback to window.location.origin when unset/empty.",
+      "acceptanceCriteria": [
+        "`frontend/index.html` continues to populate `og:url`, JSON-LD `url`, and JSON-LD `potentialAction.target` from `%VITE_PUBLIC_URL%`.",
+        "When `VITE_PUBLIC_URL` is not provided at build time, the runtime fallback sets these values to `window.location.origin` without errors."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Keep og:url and JSON-LD values sourced from %VITE_PUBLIC_URL%, and harden the runtime fallback so it also handles the env var being replaced with an empty string (not just the literal placeholder), setting og:url, JSON-LD url, and JSON-LD potentialAction.target to window.location.origin without throwing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Add/confirm clear English custom domain guidance explaining registrar/DNS responsibilities and that updating VITE_PUBLIC_URL + redeploy is required for SEO/sitemap updates.",
+      "acceptanceCriteria": [
+        "The Publishing & Share page contains a clear checklist of steps for registering a domain, configuring DNS, waiting for propagation, and updating `VITE_PUBLIC_URL` + redeploying for SEO/sitemap updates.",
+        "The UI clearly states the system does not automatically purchase/register domains."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/PublishingSharePage.tsx",
           "operation": "modify",
-          "description": "Review and refine all user-facing strings in the Publishing / Share UI to ensure clear English phrasing, explicitly ICP-focused hosting/deployment guidance, and no implication of Google Cloud/Google Play availability. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
-          "operation": "modify",
-          "description": "Ensure the new navigation link label (“Publishing / Share”) and any surrounding footer text added/adjusted is in clear English and does not imply Google deployment. Verify the component's usage instructions before implementing."
+          "description": "Review and refine the existing Custom Domain guidance copy to explicitly (a) state domain registration and DNS changes happen at the user’s registrar, (b) include a plain-English checklist (registrar purchase, DNS records, propagation wait), and (c) clearly instruct setting VITE_PUBLIC_URL and redeploying to update canonical sharing URL, SEO metadata, and sitemap. Use existing shadcn/ui components (Alert, Card) for the checklist and callouts; verify the component's usage instructions before implementing."
         }
       ]
     }
